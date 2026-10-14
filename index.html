@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sintaxis | Noticias en Breve</title>
+    <style>
+        /* Variables de colores (Paleta más vibrante y moderna) */
+        :root {
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #1c1e21;
+            --text-muted: #65676b;
+            --primary: #4f46e5; /* Índigo vibrante */
+            --primary-hover: #4338ca;
+            --accent: #f59e0b; /* Naranja para detalles */
+            --tag-bg: #e0e7ff;
+            --tag-text: #3730a3;
+            --radius: 20px; 
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Cabecera y Navegación (Sticky) */
+        header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0 8px 0;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        /* Filtros por Categoría */
+        .filters {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            width: 100%;
+            max-width: 500px;
+            padding: 0 20px 10px 20px;
+            box-sizing: border-box;
+            scrollbar-width: none; /* Oculta scrollbar en Firefox */
+        }
+        .filters::-webkit-scrollbar { display: none; } /* Oculta scrollbar en Chrome */
+
+        .filter-btn {
+            background: #f3f4f6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover { background: #e5e7eb; }
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Contenedor Principal */
+        main {
+            width: 100%;
+            max-width: 480px;
+            padding: 24px 20px;
+            box-sizing: border-box;
+            min-height: 70vh; /* Para que el footer baje */
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Tarjetas de Noticias */
+        .news-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: var(--transition);
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.02);
+            animation: fadeInCard 0.5s ease;
+        }
+
+        .news-card:hover {
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #f0f0f0;
+            background-color: #e5e7eb; /* Color de carga */
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0 0 12px 0;
+            line-height: 1.35;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Capas de contenido */
+        .content-layer {
+            display: none;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #f0f2f5;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .content-layer.active { display: block; }
+        .layer-2 { color: var(--text-muted); }
+
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .source-link:hover { text-decoration: underline; }
+
+        /* Botones de acción */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .btn-group { display: flex; gap: 8px; }
+
+        .action-btn {
+            background: #f9fafb;
+            border: 1px solid #f3f4f6;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+            transform: scale(1.1);
+        }
+
+        .btn-read {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn-read:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
+
+        .progress-indicators {
+            display: flex;
+            gap: 4px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #d1d5db;
+            transition: var(--transition);
+        }
+
+        .dot.active {
+            background: var(--primary);
+            width: 18px;
+            border-radius: 10px;
+        }
+
+        /* Pie de página */
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background-color: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            margin-top: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInCard {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabecera Fija -->
+    <header>
+        <div class="logo">⚡ Sintaxis<span>News</span></div>
+        <div class="filters" id="filter-container">
+            <button class="filter-btn active" data-tag="Todos">Todos</button>
+            <button class="filter-btn" data-tag="Urbanismo">Urbanismo</button>
+            <button class="filter-btn" data-tag="Tecnología">Tecnología</button>
+            <button class="filter-btn" data-tag="Desarrollo">Desarrollo</button>
+            <button class="filter-btn" data-tag="Cultura">Cultura</button>
+            <button class="filter-btn" data-tag="Trabajo">Trabajo</button>
+        </div>
+    </header>
+
+    <!-- Contenedor de Noticias -->
+    <main id="feed"></main>
+
+    <!-- Pie de Página -->
+    <footer>
+        <p>© 2026 Sintaxis News. Actualidad resumida.</p>
+        <p>Prototipo de divulgación progresiva.</p>
+    </footer>
+
+<script>
+    // 1. Base de Datos Extendida (Con imágenes y fuentes)
+    const newsData = [
+        {
+            id: 1,
+            title: "Adiós semáforos: El asfalto LED que cambia el flujo urbano",
+            tags: ["Urbanismo", "Tecnología"],
+            img: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=80",
+            summary: "Ciudades están reemplazando los semáforos por cruces inteligentes iluminados. Los sensores detectan peatones y cambian el color del asfalto dinámicamente para ceder el paso.", 
+            context: "Esto ha reducido un 40% los accidentes. Además, al evitar detenciones vehiculares innecesarias en horarios de bajo tráfico, disminuyen las emisiones de CO2 drásticamente.",
+            sourceName: "Wired Cities",
+            sourceUrl: "#"
+        },
+        {
+            id: 2,
+            title: "Nuevo motor web permite exportar juegos 2D estilo 16-bits",
+            tags: ["Desarrollo", "Tecnología"],
+            img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80",
+            summary: "Una actualización en herramientas HTML5 y Canvas ahora permite compilar lógicas complejas de videojuegos con estética pixel-art directamente en el navegador sin instalar software pesado.", 
+            context: "Ideal para creadores independientes. Soporta físicas avanzadas y colisiones, facilitando la exportación de mecánicas retro (estilo SNES) con un rendimiento de 60 cuadros por segundo.",
+            sourceName: "GameDev Hub",
+            sourceUrl: "#"
+        },
+        {
+            id: 3,
+            title: "Publican antología de Poe y Lovecraft con estética 'Claymation'",
+            tags: ["Cultura", "Literatura"],
+            img: "https://images.unsplash.com/photo-1588666309990-d68f08e3d4a6?auto=format&fit=crop&w=600&q=80",
+            summary: "Una editorial independiente revitalizó obras de dominio público del terror gótico y cósmico. Las nuevas ediciones sustituyen los clásicos grabados por ilustraciones hiper-táctiles de plastilina.", 
+            context: "El proyecto busca acercar estas narrativas a un nuevo público mediante texturas cálidas que contrastan fuertemente con las descripciones sombrías de 'El color que cayó del cielo' o 'Drácula'.",
+            sourceName: "Revista Literaria",
+            sourceUrl: "#"
+        },
+        {
+            id: 4,
+            title: "IA reduce en un 60% la carga de auditorías en Contact Centers",
+            tags: ["Trabajo", "Tecnología"],
+            img: "https://images.unsplash.com/photo-1596526131083-e8c638c9c6c7?auto=format&fit=crop&w=600&q=80",
+            summary: "Nuevos algoritmos de procesamiento natural están automatizando el chequeo de rúbricas de calidad. La IA transcribe, analiza el tono y detecta errores operativos en tiempo real.", 
+            context: "Esto libera a los analistas de calidad (QA) de escuchar horas de grabaciones manuales, permitiéndoles enfocar su tiempo exclusivamente en el coaching estratégico y en dar feedback a los agentes.",
+            sourceName: "Call Center News",
+            sourceUrl: "#"
+        }
+    ];
+
+    const feedContainer = document.getElementById('feed');
+    const filterContainer = document.getElementById('filter-container');
+
+    // 2. Función para crear la tarjeta visualmente
+    function createCard(news) {
+        const card = document.createElement('div');
+        card.className = 'news-card';
+        card.dataset.state = 0; 
+
+        card.innerHTML = `
+            <img src="${news.img}" alt="Imagen de noticia" class="card-img" loading="lazy">
+            <div class="card-content">
+                <h2 class="title">${news.title}</h2>
+                <div class="tags">
+                    ${news.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+                
+                <div class="content-layer layer-1">
+                    <p>${news.summary}</p>
+                </div>
+                
+                <div class="content-layer layer-2">
+                    <p><strong>El contexto:</strong> ${news.context}</p>
+                    <a href="${news.sourceUrl}" class="source-link" target="_blank" rel="noopener">
+                        Leer en ${news.sourceName} ↗
+                    </a>
+                </div>
+
+                <div class="actions">
+                    <div class="btn-group">
+                        <button class="action-btn" title="Guardar">❤️</button>
+                        <button class="action-btn" title="Ocultar tema">❌</button>
+                        <button class="action-btn" title="Compartir">🔗</button>
+                    </div>
+                    <button class="btn-read">Resumen</button>
+                </div>
+
+                <div class="progress-indicators">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        `;
+
+        // Lógica de Divulgación progresiva
+        const btnRead = card.querySelector('.btn-read');
+        const layer1 = card.querySelector('.layer-1');
+        const layer2 = card.querySelector('.layer-2');
+        const dots = card.querySelectorAll('.dot');
+
+        const advanceState = (e) => {
+            // Evitar conflictos al hacer clic en botones de acción o enlaces
+            if(e.target.classList.contains('action-btn') || e.target.classList.contains('source-link')) return;
+
+            let state = parseInt(card.dataset.state);
+
+            if (state === 0) {
+                layer1.classList.add('active');
+                btnRead.innerText = "Contexto";
+                dots[0].classList.remove('active');
+                dots[1].classList.add('active');
+                card.dataset.state = 1;
+            } else if (state === 1) {
+                layer2.classList.add('active');
+                btnRead.innerText = "Cerrar";
+                dots[1].classList.remove('active');
+                dots[2].classList.add('active');
+                card.dataset.state = 2;
+            } else {
+                layer1.classList.remove('active');
+                layer2.classList.remove('active');
+                btnRead.innerText = "Resumen";
+                dots[2].classList.remove('active');
+                dots[0].classList.add('active');
+                card.dataset.state = 0;
+            }
+        };
+
+        card.addEventListener('click', advanceState);
+        return card;
+    }
+
+    // 3. Lógica de renderizado y filtrado dinámico
+    function renderFeed(filterTag) {
+        feedContainer.innerHTML = ''; // Limpia las noticias actuales
+        
+        // Filtra los datos
+        const filteredData = filterTag === 'Todos' 
+            ? newsData 
+            : newsData.filter(news => news.tags.includes(filterTag));
+        
+        // Inyecta las tarjetas correspondientes
+        filteredData.forEach(news => {
+            feedContainer.appendChild(createCard(news));
+        });
+    }
+
+    // 4. Configurar eventos de los botones de filtro
+    filterContainer.addEventListener('click', (e) => {
+        if(e.target.classList.contains('filter-btn')) {
+            // Quitar clase activa de todos y ponerla al clickeado
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Llamar al renderizado con el nuevo tag
+            renderFeed(e.target.dataset.tag);
+        }
+    });
+
+    // Iniciar la web cargando "Todos" por defecto
+    renderFeed('Todos');
+
+</script>
+</body>
+</html>
