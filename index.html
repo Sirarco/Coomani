@@ -305,7 +305,7 @@
     // ==========================================
     // INSERTA AQUÍ LA URL DE TU WEB APP DE GOOGLE APPS SCRIPT
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbwmSPoefuWxpL9qpydTGhLFgPepxdDZ0tY4db4uAUippymIcErFBAmTSGMbmiTDtDUC/exec"; 
+    const API_URL = "URL_AQUI"; 
     
     let newsData = []; // Array vacío que se llenará con los datos del Sheet
 
@@ -313,10 +313,14 @@
     const filterContainer = document.getElementById('filter-container');
     const loader = document.getElementById('loader');
 
-    // 1. Obtener datos de Google Sheets
+    // 1. Obtener datos de Google Sheets (Con configuración CORS)
     async function fetchNews() {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch(API_URL, {
+                method: 'GET',
+                mode: 'cors',         // Fuerza la petición CORS
+                redirect: 'follow'    // Permite que Google redireccione internamente
+            });
             const data = await response.json();
             newsData = data;
             
@@ -351,7 +355,7 @@
         });
     }
 
-    // 3. Crear tarjeta (Igual que la versión anterior, adaptada a tus llaves del sheet)
+    // 3. Crear tarjeta (Adaptada a tus llaves del sheet)
     function createCard(news) {
         const card = document.createElement('div');
         card.className = 'news-card';
