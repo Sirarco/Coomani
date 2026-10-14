@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sintaxis | Noticias en Breve</title>
+    <title>COOMANI | Noticias de Anime</title>
     <style>
-        /* Variables de colores (Paleta más vibrante y moderna) */
+        /* Variables adaptadas al branding COOMANI (Anime style) */
         :root {
             --bg-color: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #1c1e21;
             --text-muted: #65676b;
-            --primary: #4f46e5; /* Índigo vibrante */
-            --primary-hover: #4338ca;
-            --accent: #f59e0b; /* Naranja para detalles */
-            --tag-bg: #e0e7ff;
-            --tag-text: #3730a3;
+            --primary: #ff6b00; /* Naranja vibrante Anime */
+            --primary-hover: #e65c00;
+            --accent: #f59e0b; 
+            --tag-bg: #fff0e6;
+            --tag-text: #cc5500;
             --radius: 20px; 
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -30,7 +30,7 @@
             align-items: center;
         }
 
-        /* Cabecera y Navegación (Sticky) */
+        /* Cabecera y Navegación */
         header {
             position: sticky;
             top: 0;
@@ -46,21 +46,22 @@
         }
 
         .logo {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 900;
             color: var(--text-main);
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
             display: flex;
             align-items: center;
             gap: 8px;
             margin-bottom: 12px;
+            text-transform: uppercase;
         }
 
         .logo span {
             color: var(--primary);
         }
 
-        /* Filtros por Categoría */
+        /* Filtros Dinámicos */
         .filters {
             display: flex;
             gap: 8px;
@@ -69,9 +70,9 @@
             max-width: 500px;
             padding: 0 20px 10px 20px;
             box-sizing: border-box;
-            scrollbar-width: none; /* Oculta scrollbar en Firefox */
+            scrollbar-width: none; 
         }
-        .filters::-webkit-scrollbar { display: none; } /* Oculta scrollbar en Chrome */
+        .filters::-webkit-scrollbar { display: none; } 
 
         .filter-btn {
             background: #f3f4f6;
@@ -79,7 +80,7 @@
             padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.85rem;
             color: var(--text-muted);
             white-space: nowrap;
@@ -90,7 +91,15 @@
         .filter-btn.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
+        }
+
+        /* Loader */
+        #loader {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         /* Contenedor Principal */
@@ -99,7 +108,7 @@
             max-width: 480px;
             padding: 24px 20px;
             box-sizing: border-box;
-            min-height: 70vh; /* Para que el footer baje */
+            min-height: 70vh; 
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -127,7 +136,7 @@
             height: 200px;
             object-fit: cover;
             border-bottom: 1px solid #f0f0f0;
-            background-color: #e5e7eb; /* Color de carga */
+            background-color: #e5e7eb; 
         }
 
         .card-content {
@@ -155,7 +164,7 @@
             font-size: 0.7rem;
             padding: 4px 10px;
             border-radius: 20px;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -183,7 +192,7 @@
             font-size: 0.85rem;
             color: var(--primary);
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 800;
         }
         .source-link:hover { text-decoration: underline; }
 
@@ -223,10 +232,10 @@
             border: none;
             padding: 10px 20px;
             border-radius: 25px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2);
         }
 
         .btn-read:hover {
@@ -255,7 +264,6 @@
             border-radius: 10px;
         }
 
-        /* Pie de página */
         footer {
             width: 100%;
             text-align: center;
@@ -279,77 +287,71 @@
 </head>
 <body>
 
-    <!-- Cabecera Fija -->
     <header>
-        <div class="logo">⚡ Sintaxis<span>News</span></div>
+        <div class="logo">COOMANI<span>.</span></div>
         <div class="filters" id="filter-container">
-            <button class="filter-btn active" data-tag="Todos">Todos</button>
-            <button class="filter-btn" data-tag="Urbanismo">Urbanismo</button>
-            <button class="filter-btn" data-tag="Tecnología">Tecnología</button>
-            <button class="filter-btn" data-tag="Desarrollo">Desarrollo</button>
-            <button class="filter-btn" data-tag="Cultura">Cultura</button>
-            <button class="filter-btn" data-tag="Trabajo">Trabajo</button>
+            <!-- Los filtros se inyectarán dinámicamente desde el Google Sheet -->
         </div>
     </header>
 
-    <!-- Contenedor de Noticias -->
+    <div id="loader">Cargando base de datos desde Google Sheets... 🦊</div>
     <main id="feed"></main>
 
-    <!-- Pie de Página -->
     <footer>
-        <p>© 2026 Sintaxis News. Actualidad resumida.</p>
-        <p>Prototipo de divulgación progresiva.</p>
+        <p>© 2026 COOMANI. Actualidad Anime resumida.</p>
     </footer>
 
 <script>
-    // 1. Base de Datos Extendida (Con imágenes y fuentes)
-    const newsData = [
-        {
-            id: 1,
-            title: "Adiós semáforos: El asfalto LED que cambia el flujo urbano",
-            tags: ["Urbanismo", "Tecnología"],
-            img: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=600&q=80",
-            summary: "Ciudades están reemplazando los semáforos por cruces inteligentes iluminados. Los sensores detectan peatones y cambian el color del asfalto dinámicamente para ceder el paso.", 
-            context: "Esto ha reducido un 40% los accidentes. Además, al evitar detenciones vehiculares innecesarias en horarios de bajo tráfico, disminuyen las emisiones de CO2 drásticamente.",
-            sourceName: "Wired Cities",
-            sourceUrl: "#"
-        },
-        {
-            id: 2,
-            title: "Nuevo motor web permite exportar juegos 2D estilo 16-bits",
-            tags: ["Desarrollo", "Tecnología"],
-            img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80",
-            summary: "Una actualización en herramientas HTML5 y Canvas ahora permite compilar lógicas complejas de videojuegos con estética pixel-art directamente en el navegador sin instalar software pesado.", 
-            context: "Ideal para creadores independientes. Soporta físicas avanzadas y colisiones, facilitando la exportación de mecánicas retro (estilo SNES) con un rendimiento de 60 cuadros por segundo.",
-            sourceName: "GameDev Hub",
-            sourceUrl: "#"
-        },
-        {
-            id: 3,
-            title: "Publican antología de Poe y Lovecraft con estética 'Claymation'",
-            tags: ["Cultura", "Literatura"],
-            img: "https://images.unsplash.com/photo-1588666309990-d68f08e3d4a6?auto=format&fit=crop&w=600&q=80",
-            summary: "Una editorial independiente revitalizó obras de dominio público del terror gótico y cósmico. Las nuevas ediciones sustituyen los clásicos grabados por ilustraciones hiper-táctiles de plastilina.", 
-            context: "El proyecto busca acercar estas narrativas a un nuevo público mediante texturas cálidas que contrastan fuertemente con las descripciones sombrías de 'El color que cayó del cielo' o 'Drácula'.",
-            sourceName: "Revista Literaria",
-            sourceUrl: "#"
-        },
-        {
-            id: 4,
-            title: "IA reduce en un 60% la carga de auditorías en Contact Centers",
-            tags: ["Trabajo", "Tecnología"],
-            img: "https://images.unsplash.com/photo-1596526131083-e8c638c9c6c7?auto=format&fit=crop&w=600&q=80",
-            summary: "Nuevos algoritmos de procesamiento natural están automatizando el chequeo de rúbricas de calidad. La IA transcribe, analiza el tono y detecta errores operativos en tiempo real.", 
-            context: "Esto libera a los analistas de calidad (QA) de escuchar horas de grabaciones manuales, permitiéndoles enfocar su tiempo exclusivamente en el coaching estratégico y en dar feedback a los agentes.",
-            sourceName: "Call Center News",
-            sourceUrl: "#"
-        }
-    ];
+    // ==========================================
+    // INSERTA AQUÍ LA URL DE TU WEB APP DE GOOGLE APPS SCRIPT
+    // ==========================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbwmSPoefuWxpL9qpydTGhLFgPepxdDZ0tY4db4uAUippymIcErFBAmTSGMbmiTDtDUC/exec"; 
+    
+    let newsData = []; // Array vacío que se llenará con los datos del Sheet
 
     const feedContainer = document.getElementById('feed');
     const filterContainer = document.getElementById('filter-container');
+    const loader = document.getElementById('loader');
 
-    // 2. Función para crear la tarjeta visualmente
+    // 1. Obtener datos de Google Sheets
+    async function fetchNews() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            newsData = data;
+            
+            loader.style.display = 'none'; // Ocultamos el mensaje de carga
+            
+            generateFilters(data); // Genera los botones arriba leyendo las temáticas
+            renderFeed('Todos');   // Dibuja las noticias
+            
+        } catch (error) {
+            console.error("Error al cargar datos:", error);
+            loader.innerText = "Error al conectar con Google Sheets. Verifica la URL de la API.";
+        }
+    }
+
+    // 2. Generar filtros dinámicamente extrayendo etiquetas únicas
+    function generateFilters(data) {
+        const uniqueTags = new Set();
+        data.forEach(news => {
+            news.tags.forEach(tag => uniqueTags.add(tag));
+        });
+
+        // Agregamos siempre el botón de "Todos" primero
+        filterContainer.innerHTML = `<button class="filter-btn active" data-tag="Todos">Todos</button>`;
+
+        // Inyectamos el resto de las temáticas leídas del sheet
+        uniqueTags.forEach(tag => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.dataset.tag = tag;
+            btn.innerText = tag;
+            filterContainer.appendChild(btn);
+        });
+    }
+
+    // 3. Crear tarjeta (Igual que la versión anterior, adaptada a tus llaves del sheet)
     function createCard(news) {
         const card = document.createElement('div');
         card.className = 'news-card';
@@ -368,9 +370,9 @@
                 </div>
                 
                 <div class="content-layer layer-2">
-                    <p><strong>El contexto:</strong> ${news.context}</p>
+                    <p><strong>En Profundidad:</strong> ${news.context}</p>
                     <a href="${news.sourceUrl}" class="source-link" target="_blank" rel="noopener">
-                        Leer en ${news.sourceName} ↗
+                        Fuente: ${news.sourceName} ↗
                     </a>
                 </div>
 
@@ -391,21 +393,20 @@
             </div>
         `;
 
-        // Lógica de Divulgación progresiva
+        // Divulgación progresiva
         const btnRead = card.querySelector('.btn-read');
         const layer1 = card.querySelector('.layer-1');
         const layer2 = card.querySelector('.layer-2');
         const dots = card.querySelectorAll('.dot');
 
         const advanceState = (e) => {
-            // Evitar conflictos al hacer clic en botones de acción o enlaces
             if(e.target.classList.contains('action-btn') || e.target.classList.contains('source-link')) return;
 
             let state = parseInt(card.dataset.state);
 
             if (state === 0) {
                 layer1.classList.add('active');
-                btnRead.innerText = "Contexto";
+                btnRead.innerText = "Detalles";
                 dots[0].classList.remove('active');
                 dots[1].classList.add('active');
                 card.dataset.state = 1;
@@ -429,35 +430,30 @@
         return card;
     }
 
-    // 3. Lógica de renderizado y filtrado dinámico
+    // 4. Lógica de renderizado y filtrado
     function renderFeed(filterTag) {
-        feedContainer.innerHTML = ''; // Limpia las noticias actuales
+        feedContainer.innerHTML = ''; 
         
-        // Filtra los datos
         const filteredData = filterTag === 'Todos' 
             ? newsData 
             : newsData.filter(news => news.tags.includes(filterTag));
         
-        // Inyecta las tarjetas correspondientes
         filteredData.forEach(news => {
             feedContainer.appendChild(createCard(news));
         });
     }
 
-    // 4. Configurar eventos de los botones de filtro
+    // Eventos de los botones
     filterContainer.addEventListener('click', (e) => {
         if(e.target.classList.contains('filter-btn')) {
-            // Quitar clase activa de todos y ponerla al clickeado
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             e.target.classList.add('active');
-            
-            // Llamar al renderizado con el nuevo tag
             renderFeed(e.target.dataset.tag);
         }
     });
 
-    // Iniciar la web cargando "Todos" por defecto
-    renderFeed('Todos');
+    // Iniciar la aplicación
+    fetchNews();
 
 </script>
 </body>
