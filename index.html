@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COOMANI | Noticias de Anime</title>
     
+    <!-- NUEVO: Favicon simple con emoji -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    
     <!-- Íconos Modernos Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -127,7 +130,6 @@
         .toggle-tags-btn { background: var(--text-main); color: white; }
         .toggle-tags-btn:hover { background: #333; }
 
-        /* NUEVO: Menú de Navegación */
         .view-tabs {
             display: flex;
             justify-content: center;
@@ -154,7 +156,33 @@
         .spacer { height: 140px; transition: var(--transition); }
         header.shrink + .spacer { height: 100px; }
         
-        #loader { padding: 40px; text-align: center; color: var(--text-muted); font-weight: 600; }
+        /* NUEVO: Animación de Carga Kawaii */
+        #loader { 
+            padding: 40px 20px; 
+            text-align: center; 
+            color: var(--text-muted); 
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .kawaii-emojis {
+            display: flex;
+            gap: 12px;
+            font-size: 2rem;
+        }
+        .kawaii-emojis span {
+            animation: bounce 0.6s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
+        }
+        .kawaii-emojis span:nth-child(2) { animation-delay: 0.2s; }
+        .kawaii-emojis span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
         
         main {
             width: 100%;
@@ -216,7 +244,6 @@
         .title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0 0 10px 0; line-height: 1.3; }
         .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
         
-        /* NUEVO: Animaciones de Tags */
         .tag {
             font-size: 0.65rem;
             padding: 3px 8px;
@@ -226,9 +253,7 @@
             letter-spacing: 0.5px;
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        @media (hover: hover) {
-            .tag:hover { transform: scale(1.08); }
-        }
+        @media (hover: hover) { .tag:hover { transform: scale(1.08); } }
         .tag:active { transform: scale(0.95); }
 
         .back-title { font-size: 1rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; border-bottom: 2px solid var(--primary); padding-bottom: 6px; }
@@ -239,7 +264,6 @@
         .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f2f5; padding-top: 12px; }
         .btn-group { display: flex; gap: 8px; }
         
-        /* NUEVO: Animación del Botón Me Gusta */
         .action-btn {
             background: #f9fafb;
             border: 1px solid #f3f4f6;
@@ -260,14 +284,8 @@
             50% { transform: scale(1.4); }
             100% { transform: scale(1); }
         }
-        .action-btn.liked {
-            color: #ff3b30;
-            border-color: #ff3b30;
-        }
-        .action-btn.liked i {
-            fill: #ff3b30;
-            animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
+        .action-btn.liked { color: #ff3b30; border-color: #ff3b30; }
+        .action-btn.liked i { fill: #ff3b30; animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
         .btn-read { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2); }
         .btn-read:hover { background: var(--primary-hover); transform: scale(1.05); }
@@ -282,7 +300,6 @@
         .footer-info { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 8px; align-items: center; }
         .footer-info code { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; font-weight: 700; color: var(--primary); }
 
-        /* NUEVO: Banner de Cookies (Contexto Legal Chile) */
         .cookie-banner {
             position: fixed;
             bottom: 50px; 
@@ -301,32 +318,13 @@
             transition: transform 0.4s ease-in-out;
         }
         .cookie-banner.show { transform: translateY(0); }
-        .cookie-banner button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-        }
+        .cookie-banner button { background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-        /* NUEVO: Ajustes Móviles y Scroll Magnético */
         @media (max-width: 768px) {
-            html {
-                scroll-snap-type: y mandatory;
-            }
-            main {
-                grid-template-columns: 1fr;
-            }
-            .news-card {
-                scroll-snap-align: center;
-                scroll-margin-top: 140px; /* Evita que el header tape la noticia al fijarse */
-            }
-            .tag {
-                font-size: 0.85rem; /* Letras más grandes en móvil */
-                padding: 5px 12px;
-            }
+            html { scroll-snap-type: y mandatory; }
+            main { grid-template-columns: 1fr; }
+            .news-card { scroll-snap-align: center; scroll-margin-top: 140px; }
+            .tag { font-size: 0.85rem; padding: 5px 12px; }
             footer { justify-content: center; gap: 15px; }
             .footer-info span:first-child { display: none; }
         }
@@ -346,12 +344,20 @@
         </div>
     </header>
     <div class="spacer"></div>
-    <div id="loader">Cargando base de datos desde Google Sheets... ⏳</div>
+    
+    <!-- NUEVO: Loader y mensaje modificado -->
+    <div id="loader">
+        <div class="kawaii-emojis">
+            <span>🕵️‍♀️</span>
+            <span>🔎</span>
+            <span>🌸</span>
+        </div>
+        <span id="loader-text">Investigando las mejores noticias para ti...</span>
+    </div>
     
     <main id="feed"></main>
     <button id="btn-cargar-mas" class="btn-cargar-mas" style="display: none;">Cargar más noticias</button>
 
-    <!-- Banner de Cookies -->
     <div id="cookie-banner" class="cookie-banner">
         <span>Utilizamos cookies para guardar tus preferencias de "Me gusta" y mejorar tus recomendaciones.</span>
         <button id="accept-cookies">Entendido</button>
@@ -361,7 +367,6 @@
         <div class="social-icons">
             <a href="https://www.instagram.com/" target="_blank" rel="noopener" title="Instagram"><i data-lucide="instagram" style="width: 18px;"></i></a>
             <a href="https://www.tiktok.com/" target="_blank" rel="noopener" title="TikTok">
-                <!-- Icono nativo genérico en SVG para TikTok para evitar fallos de librería -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
             </a>
             <a href="#" title="Twitter / X"><i data-lucide="twitter" style="width: 18px;"></i></a>
@@ -375,13 +380,15 @@
 
 <script>
     // ==========================================
-    // CONFIGURACIÓN DE APIS (Sheets y Supabase)
+    // CONFIGURACIÓN DE APIS
     // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbwmSPoefuWxpL9qpydTGhLFgPepxdDZ0tY4db4uAUippymIcErFBAmTSGMbmiTDtDUC/exec";      
     
     const SUPABASE_URL = 'https://keohrixjwiwzkrntfkht.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtlb2hyaXhqd2l3emtybnRma2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNjg1MzgsImV4cCI6MjEwNzY0NDUzOH0.p8CuDNNUpr1veC5ZzFGKhaFgfr171SQNpiWRgvpbujE';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    // CORRECCIÓN: Renombramos la variable a supabaseClient
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // ==========================================
     // VARIABLES GLOBALES
@@ -390,7 +397,7 @@
     let selectedTags = new Set(); 
     let limiteNoticias = 25;
     let tagsExpandidos = false;
-    let currentView = 'todo'; // 'todo', 'feed', 'likes'
+    let currentView = 'todo'; 
     
     let currentUser = null;
     let userLikes = new Set();
@@ -398,31 +405,31 @@
     const feedContainer = document.getElementById('feed');
     const filterContainer = document.getElementById('filter-container');
     const loader = document.getElementById('loader');
-    const header = document.getElementById('main-header');
+    const loaderText = document.getElementById('loader-text');
     const btnCargarMas = document.getElementById('btn-cargar-mas');
     const authBtn = document.getElementById('auth-btn');
 
     // ==========================================
     // LÓGICA DE AUTENTICACIÓN Y BASE DE DATOS
     // ==========================================
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
         if (session) {
             currentUser = session.user;
             authBtn.innerText = "Cerrar Sesión";
-            authBtn.onclick = async () => { await supabase.auth.signOut(); window.location.reload(); };
+            authBtn.onclick = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
             fetchUserLikes();
         } else {
             currentUser = null;
             userLikes.clear();
             authBtn.innerText = "Log In";
-            authBtn.onclick = async () => { await supabase.auth.signInWithOAuth({ provider: 'google' }); };
+            authBtn.onclick = async () => { await supabaseClient.auth.signInWithOAuth({ provider: 'google' }); };
             if(newsData.length > 0) renderFeed();
         }
     });
 
     async function fetchUserLikes() {
         if (!currentUser) return;
-        const { data, error } = await supabase.from('user_likes').select('news_id');
+        const { data, error } = await supabaseClient.from('user_likes').select('news_id');
         if (data) {
             userLikes = new Set(data.map(d => String(d.news_id)));
         }
@@ -440,20 +447,17 @@
         const icon = btnEl.querySelector('i');
 
         if (userLikes.has(idStr)) {
-            // Quitar Me Gusta
             userLikes.delete(idStr);
             btnEl.classList.remove('liked');
             icon.setAttribute('fill', 'none');
-            await supabase.from('user_likes').delete().match({ user_id: currentUser.id, news_id: idStr });
+            await supabaseClient.from('user_likes').delete().match({ user_id: currentUser.id, news_id: idStr });
         } else {
-            // Dar Me Gusta
             userLikes.add(idStr);
             btnEl.classList.add('liked');
             icon.setAttribute('fill', '#ff3b30');
-            await supabase.from('user_likes').insert([{ user_id: currentUser.id, news_id: idStr }]);
+            await supabaseClient.from('user_likes').insert([{ user_id: currentUser.id, news_id: idStr }]);
         }
         
-        // Si estamos en la pestaña de likes y quitamos uno, re-renderizar para ocultarlo
         if(currentView === 'likes') renderFeed();
     }
 
@@ -465,7 +469,6 @@
         else header.classList.remove('shrink');
     });
 
-    // Control de Cookies
     if (!localStorage.getItem('cookiesAccepted')) {
         setTimeout(() => document.getElementById('cookie-banner').classList.add('show'), 1500);
     }
@@ -474,7 +477,6 @@
         document.getElementById('cookie-banner').classList.remove('show');
     });
 
-    // Pestañas de Navegación (Todo / Tu Feed / Tus Me Gusta)
     document.getElementById('view-tabs').addEventListener('click', (e) => {
         if(e.target.classList.contains('tab-btn')) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -502,7 +504,6 @@
         return `background-color: ${tagColors[index].bg}; color: ${tagColors[index].text};`;
     }
 
-    // NUEVO: Formateo de fecha DD:MM:AA
     function formatDate(dateStr) {
         if(!dateStr) return 'Reciente';
         const d = new Date(dateStr);
@@ -513,7 +514,6 @@
         return `${dd}:${mm}:${yy}`;
     }
 
-    // NUEVO: Compartir nativo
     function shareNews(e, title, url) {
         e.stopPropagation();
         if (navigator.share) {
@@ -531,15 +531,16 @@
             const response = await fetch(API_URL, { method: 'GET', mode: 'cors', redirect: 'follow' });
             const data = await response.json();
             
-            // NUEVO: Ordenar por fecha más reciente
             newsData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
             
             loader.style.display = 'none';
             generateFilters(newsData);
             renderFeed();
         } catch (error) {
-            console.error("Error al cargar datos:", error);
-            loader.innerText = "Error al conectar con Google Sheets.";
+            console.error("Error de carga:", error);
+            // NUEVO: Mensaje de error personalizado sin mencionar código/hojas
+            document.querySelector('.kawaii-emojis').innerHTML = "<span>(ಥ﹏ಥ)</span>";
+            loaderText.innerText = "Oops... No pudimos encontrar las noticias. ¡Inténtalo de nuevo más tarde!";
         }
     }
 
@@ -645,7 +646,6 @@
         feedContainer.innerHTML = '';
         let targetData = newsData;
 
-        // 1. Lógica de Pestañas
         if (currentView === 'likes') {
             if (!currentUser) {
                 feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Inicia sesión para ver tu historial de Me Gusta.</p>`;
@@ -665,12 +665,10 @@
                 btnCargarMas.style.display = 'none';
                 return;
             }
-            // Extraer todos los tags de las noticias que le gustaron
             let likedTags = new Set();
             newsData.forEach(n => {
                 if(userLikes.has(String(n.id))) n.tags.forEach(t => likedTags.add(t));
             });
-            // Sugerir noticias que no tienen like, pero comparten tags
             targetData = newsData.filter(n => !userLikes.has(String(n.id)) && n.tags.some(tag => likedTags.has(tag)));
             
             if (targetData.length === 0) {
@@ -680,7 +678,6 @@
             }
         }
 
-        // 2. Lógica de Filtrado por Tags de la barra superior
         if (selectedTags.size > 0) {
             targetData = targetData.filter(news => news.tags.some(tag => selectedTags.has(tag)));
         }
@@ -691,7 +688,6 @@
             return;
         }
 
-        // 3. Paginación
         const noticiasAMostrar = targetData.slice(0, limiteNoticias);
         noticiasAMostrar.forEach(news => feedContainer.appendChild(createCard(news)));
 
