@@ -2,16 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>COOMANI | Noticias de Anime</title>
     
-    <!-- NUEVO: Favicon simple con emoji -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
-    
-    <!-- Íconos Modernos Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -96,6 +91,43 @@
         }
         .login-btn:hover { background: var(--primary); }
 
+        /* Buscador de Tags */
+        .search-wrapper {
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: center;
+            transition: var(--transition);
+            overflow: hidden;
+            max-height: 50px;
+        }
+        header.shrink .search-wrapper {
+            max-height: 0;
+            margin-bottom: 0;
+            opacity: 0;
+        }
+        #tag-search {
+            width: 100%;
+            max-width: 400px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+            text-align: center;
+        }
+        #tag-search:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+            background: #ffffff;
+        }
+
         .filters {
             display: flex;
             gap: 8px;
@@ -122,60 +154,20 @@
             transition: var(--transition);
         }
         .filter-btn:hover { background: #e5e7eb; }
-        .filter-btn.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
-        }
+        .filter-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3); }
         .toggle-tags-btn { background: var(--text-main); color: white; }
         .toggle-tags-btn:hover { background: #333; }
 
-        .view-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 6px;
-            width: 100%;
-        }
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-weight: 800;
-            font-size: 0.85rem;
-            cursor: pointer;
-            padding-bottom: 4px;
-            border-bottom: 2px solid transparent;
-            transition: var(--transition);
-        }
-        .tab-btn.active {
-            color: var(--text-main);
-            border-bottom: 2px solid var(--primary);
-        }
+        .view-tabs { display: flex; justify-content: center; gap: 16px; margin-top: 6px; width: 100%; }
+        .tab-btn { background: transparent; border: none; color: var(--text-muted); font-weight: 800; font-size: 0.85rem; cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid transparent; transition: var(--transition); }
+        .tab-btn.active { color: var(--text-main); border-bottom: 2px solid var(--primary); }
 
-        .spacer { height: 140px; transition: var(--transition); }
-        header.shrink + .spacer { height: 100px; }
+        .spacer { height: 180px; transition: var(--transition); }
+        header.shrink + .spacer { height: 110px; }
         
-        /* NUEVO: Animación de Carga Kawaii */
-        #loader { 
-            padding: 40px 20px; 
-            text-align: center; 
-            color: var(--text-muted); 
-            font-weight: 700;
-            font-size: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-        .kawaii-emojis {
-            display: flex;
-            gap: 12px;
-            font-size: 2rem;
-        }
-        .kawaii-emojis span {
-            animation: bounce 0.6s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
-        }
+        #loader { padding: 40px 20px; text-align: center; color: var(--text-muted); font-weight: 700; font-size: 1rem; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .kawaii-emojis { display: flex; gap: 12px; font-size: 2rem; }
+        .kawaii-emojis span { animation: bounce 0.6s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5); }
         .kawaii-emojis span:nth-child(2) { animation-delay: 0.2s; }
         .kawaii-emojis span:nth-child(3) { animation-delay: 0.4s; }
         
@@ -195,64 +187,20 @@
             flex: 1;
         }
         
-        .news-card {
-            background: transparent;
-            perspective: 1000px;
-            height: 460px;
-            cursor: pointer;
-        }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
+        .news-card { background: transparent; perspective: 1000px; height: 460px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .news-card.flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: var(--radius);
-            background: var(--card-bg);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(0,0,0,0.04);
-            box-sizing: border-box;
-        }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--radius); background: var(--card-bg); overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,0.04); box-sizing: border-box; }
         .card-front { justify-content: space-between; }
-        .card-back {
-            transform: rotateY(180deg);
-            padding: 24px;
-            justify-content: space-between;
-            background: #ffffff;
-        }
+        .card-back { transform: rotateY(180deg); padding: 24px; justify-content: space-between; background: #ffffff; }
         .card-img { width: 100%; height: 190px; object-fit: cover; background-color: #e5e7eb; }
-        .card-content {
-            padding: 16px 20px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            justify-content: space-between;
-        }
+        .card-content { padding: 16px 20px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
         .card-header-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .date { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
         .title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0 0 10px 0; line-height: 1.3; }
         .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
         
-        .tag {
-            font-size: 0.65rem;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         @media (hover: hover) { .tag:hover { transform: scale(1.08); } }
         .tag:active { transform: scale(0.95); }
 
@@ -264,26 +212,10 @@
         .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f2f5; padding-top: 12px; }
         .btn-group { display: flex; gap: 8px; }
         
-        .action-btn {
-            background: #f9fafb;
-            border: 1px solid #f3f4f6;
-            cursor: pointer;
-            color: var(--text-muted);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-        }
+        .action-btn { background: #f9fafb; border: 1px solid #f3f4f6; cursor: pointer; color: var(--text-muted); transition: var(--transition); display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; }
         .action-btn:hover { background: #f3f4f6; transform: scale(1.1); color: var(--primary); }
         
-        @keyframes heartPop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.4); }
-            100% { transform: scale(1); }
-        }
+        @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
         .action-btn.liked { color: #ff3b30; border-color: #ff3b30; }
         .action-btn.liked i { fill: #ff3b30; animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
@@ -300,31 +232,28 @@
         .footer-info { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 8px; align-items: center; }
         .footer-info code { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; font-weight: 700; color: var(--primary); }
 
-        .cookie-banner {
-            position: fixed;
-            bottom: 50px; 
-            left: 0;
-            width: 100%;
-            background: #1c1e21;
-            color: #fff;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 999;
-            box-sizing: border-box;
-            font-size: 0.85rem;
-            transform: translateY(100%);
-            transition: transform 0.4s ease-in-out;
-        }
+        .cookie-banner { position: fixed; bottom: 50px; left: 0; width: 100%; background: #1c1e21; color: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 999; box-sizing: border-box; font-size: 0.85rem; transform: translateY(100%); transition: transform 0.4s ease-in-out; }
         .cookie-banner.show { transform: translateY(0); }
         .cookie-banner button { background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-        @media (max-width: 768px) {
+        /* Ajustes Forzados para Móvil (Fuentes Grandes y 1 Sola Columna) */
+        @media (max-width: 850px) {
             html { scroll-snap-type: y mandatory; }
-            main { grid-template-columns: 1fr; }
-            .news-card { scroll-snap-align: center; scroll-margin-top: 140px; }
-            .tag { font-size: 0.85rem; padding: 5px 12px; }
+            main { 
+                display: flex !important; 
+                flex-direction: column !important; 
+                padding: 15px !important; 
+            }
+            .news-card { 
+                width: 100% !important; 
+                height: auto !important; 
+                min-height: 460px;
+                scroll-snap-align: center; 
+                scroll-margin-top: 160px; 
+            }
+            .filter-btn { font-size: 1rem !important; padding: 8px 18px !important; }
+            .tag { font-size: 0.85rem !important; padding: 5px 12px !important; }
+            #tag-search { max-width: 90%; }
             footer { justify-content: center; gap: 15px; }
             .footer-info span:first-child { display: none; }
         }
@@ -336,6 +265,12 @@
             <div class="logo">COOMANI<span>.</span></div>
             <button class="login-btn" id="auth-btn">Log In</button>
         </div>
+        
+        <!-- Buscador de Tags Predictivo -->
+        <div class="search-wrapper">
+            <input type="text" id="tag-search" placeholder="🔍 Buscar tag (ej. Anime, Romance)..." autocomplete="off">
+        </div>
+
         <div class="filters" id="filter-container"></div>
         <div class="view-tabs" id="view-tabs">
             <button class="tab-btn active" data-view="todo">Todo</button>
@@ -345,7 +280,6 @@
     </header>
     <div class="spacer"></div>
     
-    <!-- NUEVO: Loader y mensaje modificado -->
     <div id="loader">
         <div class="kawaii-emojis">
             <span>🕵️‍♀️</span>
@@ -379,20 +313,12 @@
     </footer>
 
 <script>
-    // ==========================================
-    // CONFIGURACIÓN DE APIS
-    // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbwmSPoefuWxpL9qpydTGhLFgPepxdDZ0tY4db4uAUippymIcErFBAmTSGMbmiTDtDUC/exec";      
-    
     const SUPABASE_URL = 'https://keohrixjwiwzkrntfkht.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtlb2hyaXhqd2l3emtybnRma2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNjg1MzgsImV4cCI6MjEwNzY0NDUzOH0.p8CuDNNUpr1veC5ZzFGKhaFgfr171SQNpiWRgvpbujE';
     
-    // CORRECCIÓN: Renombramos la variable a supabaseClient
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ==========================================
-    // VARIABLES GLOBALES
-    // ==========================================
     let newsData = [];
     let selectedTags = new Set(); 
     let limiteNoticias = 25;
@@ -408,9 +334,10 @@
     const loaderText = document.getElementById('loader-text');
     const btnCargarMas = document.getElementById('btn-cargar-mas');
     const authBtn = document.getElementById('auth-btn');
+    const tagSearchInput = document.getElementById('tag-search');
 
     // ==========================================
-    // LÓGICA DE AUTENTICACIÓN Y BASE DE DATOS
+    // AUTENTICACIÓN (Cambio a Magic Link por Correo)
     // ==========================================
     supabaseClient.auth.onAuthStateChange((event, session) => {
         if (session) {
@@ -422,7 +349,20 @@
             currentUser = null;
             userLikes.clear();
             authBtn.innerText = "Log In";
-            authBtn.onclick = async () => { await supabaseClient.auth.signInWithOAuth({ provider: 'google' }); };
+            
+            // Login por correo (Evita el error 400 de Google Cloud)
+            authBtn.onclick = async () => { 
+                const email = prompt("✨ Ingresa tu correo electrónico para iniciar sesión o registrarte:");
+                if(email && email.trim() !== "") {
+                    const { error } = await supabaseClient.auth.signInWithOtp({ email: email.trim() });
+                    if(error) {
+                        alert("Error: " + error.message);
+                    } else {
+                        alert("💌 ¡Te hemos enviado un enlace mágico a tu correo! Ábrelo para entrar automáticamente.");
+                    }
+                }
+            };
+            
             if(newsData.length > 0) renderFeed();
         }
     });
@@ -461,9 +401,6 @@
         if(currentView === 'likes') renderFeed();
     }
 
-    // ==========================================
-    // EVENTOS DE UI GENERAL
-    // ==========================================
     window.addEventListener('scroll', () => {
         if (window.scrollY > 40) header.classList.add('shrink');
         else header.classList.remove('shrink');
@@ -487,9 +424,6 @@
         }
     });
 
-    // ==========================================
-    // UTILIDADES DE DATOS
-    // ==========================================
     const tagColors = [
         { bg: '#fff0e6', text: '#cc5500' }, { bg: '#e0f2fe', text: '#0369a1' }, 
         { bg: '#fce7f3', text: '#be185d' }, { bg: '#fef3c7', text: '#b45309' }, 
@@ -523,9 +457,6 @@
         }
     }
 
-    // ==========================================
-    // CARGA Y RENDERIZADO
-    // ==========================================
     async function fetchNews() {
         try {
             const response = await fetch(API_URL, { method: 'GET', mode: 'cors', redirect: 'follow' });
@@ -538,13 +469,15 @@
             renderFeed();
         } catch (error) {
             console.error("Error de carga:", error);
-            // NUEVO: Mensaje de error personalizado sin mencionar código/hojas
             document.querySelector('.kawaii-emojis').innerHTML = "<span>(ಥ﹏ಥ)</span>";
             loaderText.innerText = "Oops... No pudimos encontrar las noticias. ¡Inténtalo de nuevo más tarde!";
         }
     }
 
-    function generateFilters(data) {
+    // ==========================================
+    // LÓGICA DE FILTROS Y BUSCADOR
+    // ==========================================
+    function generateFilters(data, searchTerm = '') {
         const conteoTags = {};
         data.forEach(news => {
             news.tags.forEach(tag => { conteoTags[tag] = (conteoTags[tag] || 0) + 1; });
@@ -553,8 +486,15 @@
         const tagsOrdenados = Object.keys(conteoTags).sort((a, b) => conteoTags[b] - conteoTags[a]);
         filterContainer.innerHTML = `<button class="filter-btn ${selectedTags.size === 0 ? 'active' : ''}" data-tag="Todos">Todos</button>`;
 
-        const limiteFiltros = tagsExpandidos ? tagsOrdenados.length : 5;
-        const tagsAMostrar = tagsOrdenados.slice(0, limiteFiltros);
+        let tagsAMostrar = tagsOrdenados;
+        
+        // Si hay texto en el buscador, mostrar las coincidencias
+        if (searchTerm !== '') {
+            tagsAMostrar = tagsOrdenados.filter(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+        } else if (!tagsExpandidos) {
+            // Si no hay búsqueda y no está expandido, mostrar solo 5
+            tagsAMostrar = tagsOrdenados.slice(0, 5);
+        }
 
         tagsAMostrar.forEach(tag => {
             const btn = document.createElement('button');
@@ -565,7 +505,8 @@
             filterContainer.appendChild(btn);
         });
 
-        if (tagsOrdenados.length > 5) {
+        // Solo mostrar el botón de Expandir si NO hay búsqueda activa
+        if (searchTerm === '' && tagsOrdenados.length > 5) {
             const toggleBtn = document.createElement('button');
             toggleBtn.className = 'filter-btn toggle-tags-btn';
             toggleBtn.innerText = tagsExpandidos ? 'Ver menos...' : 'Ver más...';
@@ -577,6 +518,10 @@
             filterContainer.appendChild(toggleBtn);
         }
     }
+
+    tagSearchInput.addEventListener('input', (e) => {
+        generateFilters(newsData, e.target.value.trim());
+    });
 
     function createCard(news) {
         const card = document.createElement('div');
@@ -710,6 +655,10 @@
                 else selectedTags.add(tag);
             }
             limiteNoticias = 25; 
+            
+            // Si había búsqueda, limpiarla al seleccionar un tag
+            tagSearchInput.value = '';
+            
             generateFilters(newsData); 
             renderFeed();
         }
