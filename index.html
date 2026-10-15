@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COOMANI | Noticias de Anime</title>
+    <!-- Script de Íconos Modernos Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg-color: #f4f6f8;
@@ -15,7 +17,6 @@
             --radius: 20px; 
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
@@ -25,8 +26,8 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            padding-bottom: 60px; /* MODIFICADO: Espacio para que el footer fijo no tape el contenido */
         }
-
         /* Cabecera Flotante y Retráctil */
         header {
             position: fixed;
@@ -44,12 +45,25 @@
             transition: var(--transition);
             box-sizing: border-box;
         }
-
         header.shrink {
             padding: 8px 0 6px 0;
             background: rgba(255, 255, 255, 0.95);
         }
-
+        /* MODIFICADO: Contenedor superior para el Logo y Botón Login */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+            transition: var(--transition);
+        }
+        header.shrink .header-top {
+            margin-bottom: 4px;
+        }
         .logo {
             font-size: 1.8rem;
             font-weight: 900;
@@ -58,18 +72,29 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            margin-bottom: 8px;
             text-transform: uppercase;
             transition: var(--transition);
         }
-
         header.shrink .logo {
             font-size: 1.2rem;
-            margin-bottom: 4px;
         }
-
         .logo span {
             color: var(--primary);
+        }
+        /* MODIFICADO: Botón de Login Simulado */
+        .login-btn {
+            background: var(--text-main);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .login-btn:hover {
+            background: var(--primary);
         }
 
         /* Filtros de Selección Múltiple */
@@ -86,7 +111,6 @@
             flex-wrap: wrap;
         }
         .filters::-webkit-scrollbar { display: none; }
-
         .filter-btn {
             background: #f3f4f6;
             border: none;
@@ -99,15 +123,19 @@
             white-space: nowrap;
             transition: var(--transition);
         }
-
         .filter-btn:hover { background: #e5e7eb; }
         .filter-btn.active {
             background: var(--primary);
             color: white;
             box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3);
         }
+        /* MODIFICADO: Botón para achicar/agrandar tags */
+        .toggle-tags-btn {
+            background: var(--text-main);
+            color: white;
+        }
+        .toggle-tags-btn:hover { background: #333; }
 
-        /* Espaciador para el header fijo */
         .spacer {
             height: 120px;
             transition: var(--transition);
@@ -115,14 +143,12 @@
         header.shrink + .spacer {
             height: 80px;
         }
-
         #loader {
             padding: 40px;
             text-align: center;
             color: var(--text-muted);
             font-weight: 600;
         }
-
         /* Contenedor Responsivo en Grid */
         main {
             width: 100%;
@@ -134,7 +160,6 @@
             gap: 24px;
             flex: 1;
         }
-
         /* Estructura de Tarjeta con Giro 3D (Flip Card) */
         .news-card {
             background: transparent;
@@ -142,21 +167,19 @@
             height: 460px;
             cursor: pointer;
         }
-
         .card-inner {
             position: relative;
             width: 100%;
             height: 100%;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            /* MODIFICADO: Animación más moderna y elástica (Spring) al girar */
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
             border-radius: var(--radius);
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-
         .news-card.flipped .card-inner {
             transform: rotateY(180deg);
         }
-
         .card-front, .card-back {
             position: absolute;
             width: 100%;
@@ -170,25 +193,21 @@
             border: 1px solid rgba(0,0,0,0.04);
             box-sizing: border-box;
         }
-
         .card-front {
             justify-content: space-between;
         }
-
         .card-back {
             transform: rotateY(180deg);
             padding: 24px;
             justify-content: space-between;
             background: #ffffff;
         }
-
         .card-img {
             width: 100%;
             height: 190px;
             object-fit: cover;
             background-color: #e5e7eb;
         }
-
         .card-content {
             padding: 16px 20px;
             display: flex;
@@ -196,20 +215,17 @@
             flex: 1;
             justify-content: space-between;
         }
-
         .card-header-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
         }
-
         .date {
             font-size: 0.75rem;
             color: var(--text-muted);
             font-weight: 600;
         }
-
         .title {
             font-size: 1.1rem;
             font-weight: 800;
@@ -217,14 +233,12 @@
             margin: 0 0 10px 0;
             line-height: 1.3;
         }
-
         .tags {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             margin-bottom: 12px;
         }
-
         .tag {
             font-size: 0.65rem;
             padding: 3px 8px;
@@ -233,8 +247,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        /* Reverso de la tarjeta (Lectura) */
+        /* Reverso de la tarjeta */
         .back-title {
             font-size: 1rem;
             font-weight: 800;
@@ -243,7 +256,6 @@
             border-bottom: 2px solid var(--primary);
             padding-bottom: 6px;
         }
-
         .back-text {
             font-size: 0.9rem;
             color: var(--text-main);
@@ -252,11 +264,10 @@
             flex: 1;
             margin-bottom: 12px;
         }
-
         .source-link {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             font-size: 0.85rem;
             color: var(--primary);
             text-decoration: none;
@@ -264,8 +275,6 @@
             margin-bottom: 12px;
         }
         .source-link:hover { text-decoration: underline; }
-
-        /* Botones de acción */
         .actions {
             display: flex;
             justify-content: space-between;
@@ -273,14 +282,11 @@
             border-top: 1px solid #f0f2f5;
             padding-top: 12px;
         }
-
         .btn-group { display: flex; gap: 8px; }
-
         .action-btn {
             background: #f9fafb;
             border: 1px solid #f3f4f6;
             cursor: pointer;
-            font-size: 1rem;
             color: var(--text-muted);
             transition: var(--transition);
             display: flex;
@@ -290,9 +296,7 @@
             height: 34px;
             border-radius: 50%;
         }
-
-        .action-btn:hover { background: #f3f4f6; transform: scale(1.1); }
-
+        .action-btn:hover { background: #f3f4f6; transform: scale(1.1); color: var(--primary); }
         .btn-read {
             background: var(--primary);
             color: white;
@@ -305,40 +309,56 @@
             transition: var(--transition);
             box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2);
         }
-
         .btn-read:hover { background: var(--primary-hover); transform: scale(1.05); }
+        
+        /* MODIFICADO: Botón Cargar Más */
+        .btn-cargar-mas {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            margin: 10px auto 30px auto;
+            display: block;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2);
+        }
+        .btn-cargar-mas:hover { background: var(--primary-hover); transform: scale(1.05); }
 
-        /* Pie de página Minimalista */
+        /* MODIFICADO: Pie de página Fijo y Bajo */
         footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
             width: 100%;
             background-color: #ffffff;
             border-top: 1px solid #e5e7eb;
-            padding: 24px 20px;
+            padding: 0 20px;
+            height: 50px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* Horizontal para ocupar menos alto */
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
             box-sizing: border-box;
-            margin-top: auto;
+            z-index: 1000;
         }
-
         .social-icons {
             display: flex;
             gap: 16px;
         }
-
         .social-icons a {
             color: var(--text-muted);
-            font-size: 1.2rem;
             text-decoration: none;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
         }
-
         .social-icons a:hover {
             color: var(--primary);
             transform: translateY(-2px);
         }
-
         .footer-info {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -346,7 +366,6 @@
             gap: 8px;
             align-items: center;
         }
-
         .footer-info code {
             background: #f3f4f6;
             padding: 2px 6px;
@@ -354,27 +373,45 @@
             font-weight: 700;
             color: var(--primary);
         }
+
+        /* MODIFICADO: Versión móvil a 1 sola columna */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+            footer {
+                justify-content: center;
+                gap: 15px;
+            }
+            .footer-info span:first-child {
+                display: none; /* Oculta texto largo en móvil para ajustar */
+            }
+        }
     </style>
 </head>
 <body>
-
     <header id="main-header">
-        <div class="logo">COOMANI<span>.</span></div>
+        <div class="header-top">
+            <div class="logo">COOMANI<span>.</span></div>
+            <!-- Botón Login Simulado -->
+            <button class="login-btn" onclick="alert('Inicio de sesión simulado exitoso.')">Log In</button>
+        </div>
         <div class="filters" id="filter-container">
             <!-- Filtros inyectados dinámicamente -->
         </div>
     </header>
     <div class="spacer"></div>
-
-    <div id="loader">Cargando base de datos desde Google Sheets... 🦊</div>
+    <div id="loader">Cargando base de datos desde Google Sheets... ⏳</div>
+    
     <main id="feed"></main>
+    <button id="btn-cargar-mas" class="btn-cargar-mas" style="display: none;">Cargar más noticias</button>
 
     <footer>
         <div class="social-icons">
-            <a href="#" title="Discord">💬</a>
-            <a href="#" title="Twitter / X">🐦</a>
-            <a href="#" title="YouTube">📺</a>
-            <a href="#" title="Instagram">📸</a>
+            <a href="#" title="Discord"><i data-lucide="message-square" style="width: 18px;"></i></a>
+            <a href="#" title="Twitter / X"><i data-lucide="twitter" style="width: 18px;"></i></a>
+            <a href="#" title="YouTube"><i data-lucide="youtube" style="width: 18px;"></i></a>
+            <a href="#" title="Instagram"><i data-lucide="instagram" style="width: 18px;"></i></a>
         </div>
         <div class="footer-info">
             <span>© 2026 COOMANI. Todos los derechos reservados.</span>
@@ -387,15 +424,20 @@
     // ==========================================
     // INSERTA AQUÍ LA URL DE TU WEB APP DE GOOGLE APPS SCRIPT
     // ==========================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbwmSPoefuWxpL9qpydTGhLFgPepxdDZ0tY4db4uAUippymIcErFBAmTSGMbmiTDtDUC/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbwmSPoefuWxpL9qpydTGhLFgPepxdDZ0tY4db4uAUippymIcErFBAmTSGMbmiTDtDUC/exec";      
     
     let newsData = [];
-    let selectedTags = new Set(); // Conjunto para selección múltiple
+    let selectedTags = new Set(); 
+    
+    // MODIFICADO: Variables de configuración para tags y paginación
+    let limiteNoticias = 25;
+    let tagsExpandidos = false;
 
     const feedContainer = document.getElementById('feed');
     const filterContainer = document.getElementById('filter-container');
     const loader = document.getElementById('loader');
     const header = document.getElementById('main-header');
+    const btnCargarMas = document.getElementById('btn-cargar-mas');
 
     // Efecto Header Retráctil al hacer scroll
     window.addEventListener('scroll', () => {
@@ -406,15 +448,14 @@
         }
     });
 
-    // Paleta de colores diversos para los Tags
     const tagColors = [
-        { bg: '#fff0e6', text: '#cc5500' }, // Naranja
-        { bg: '#e0f2fe', text: '#0369a1' }, // Celeste
-        { bg: '#fce7f3', text: '#be185d' }, // Rosa
-        { bg: '#fef3c7', text: '#b45309' }, // Ámbar
-        { bg: '#f3e8ff', text: '#6b21a8' }, // Morado
-        { bg: '#dcfce7', text: '#15803d' }, // Verde
-        { bg: '#fee2e2', text: '#991b1b' }  // Rojo suave
+        { bg: '#fff0e6', text: '#cc5500' }, 
+        { bg: '#e0f2fe', text: '#0369a1' }, 
+        { bg: '#fce7f3', text: '#be185d' }, 
+        { bg: '#fef3c7', text: '#b45309' }, 
+        { bg: '#f3e8ff', text: '#6b21a8' }, 
+        { bg: '#dcfce7', text: '#15803d' }, 
+        { bg: '#fee2e2', text: '#991b1b' }  
     ];
 
     function getTagStyle(tagName) {
@@ -426,7 +467,6 @@
         return `background-color: ${tagColors[index].bg}; color: ${tagColors[index].text};`;
     }
 
-    // 1. Obtener datos de Google Sheets
     async function fetchNews() {
         try {
             const response = await fetch(API_URL, {
@@ -440,39 +480,58 @@
             loader.style.display = 'none';
             generateFilters(data);
             renderFeed();
-            
         } catch (error) {
             console.error("Error al cargar datos:", error);
             loader.innerText = "Error al conectar con Google Sheets. Verifica la URL de la API.";
         }
     }
 
-    // 2. Generar filtros dinámicos
+    // MODIFICADO: Filtros ordenados por popularidad, botón ver más/menos
     function generateFilters(data) {
-        const uniqueTags = new Set();
+        const conteoTags = {};
         data.forEach(news => {
-            news.tags.forEach(tag => uniqueTags.add(tag));
+            news.tags.forEach(tag => {
+                conteoTags[tag] = (conteoTags[tag] || 0) + 1;
+            });
         });
 
-        filterContainer.innerHTML = `<button class="filter-btn active" data-tag="Todos">Todos</button>`;
+        // Ordenar de mayor a menor frecuencia
+        const tagsOrdenados = Object.keys(conteoTags).sort((a, b) => conteoTags[b] - conteoTags[a]);
 
-        uniqueTags.forEach(tag => {
+        filterContainer.innerHTML = `<button class="filter-btn ${selectedTags.size === 0 ? 'active' : ''}" data-tag="Todos">Todos</button>`;
+
+        // Limitar a los 5 más populares por defecto
+        const limiteFiltros = tagsExpandidos ? tagsOrdenados.length : 5;
+        const tagsAMostrar = tagsOrdenados.slice(0, limiteFiltros);
+
+        tagsAMostrar.forEach(tag => {
             const btn = document.createElement('button');
             btn.className = 'filter-btn';
+            if (selectedTags.has(tag)) btn.classList.add('active');
             btn.dataset.tag = tag;
             btn.innerText = tag;
             filterContainer.appendChild(btn);
         });
+
+        // Botón para expandir/contraer
+        if (tagsOrdenados.length > 5) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'filter-btn toggle-tags-btn';
+            toggleBtn.innerText = tagsExpandidos ? 'Ver menos...' : 'Ver más...';
+            toggleBtn.onclick = (e) => {
+                e.stopPropagation();
+                tagsExpandidos = !tagsExpandidos;
+                generateFilters(data); 
+            };
+            filterContainer.appendChild(toggleBtn);
+        }
     }
 
-    // 3. Crear tarjeta con animación de giro 3D (Flip)
     function createCard(news) {
         const card = document.createElement('div');
         card.className = 'news-card';
-
         card.innerHTML = `
             <div class="card-inner">
-                <!-- Frente de la tarjeta -->
                 <div class="card-front">
                     <img src="${news.img}" alt="Imagen noticia" class="card-img" loading="lazy">
                     <div class="card-content">
@@ -487,15 +546,14 @@
                         </div>
                         <div class="actions">
                             <div class="btn-group">
-                                <button class="action-btn" title="Guardar">❤️</button>
-                                <button class="action-btn" title="Compartir">🔗</button>
+                                <!-- MODIFICADO: Íconos Modernos -->
+                                <button class="action-btn" title="Me gusta"><i data-lucide="heart" style="width: 18px;"></i></button>
+                                <button class="action-btn" title="Compartir"><i data-lucide="share-2" style="width: 18px;"></i></button>
                             </div>
-                            <button class="btn-read btn-flip">Leer más ↻</button>
+                            <button class="btn-read btn-flip">Leer más</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Reverso de la tarjeta (Giro 3D) -->
                 <div class="card-back">
                     <div>
                         <div class="back-title">${news.title}</div>
@@ -505,85 +563,97 @@
                         </div>
                     </div>
                     <div>
+                        <!-- MODIFICADO: Ícono moderno en la fuente -->
                         <a href="${news.sourceUrl}" class="source-link" target="_blank" rel="noopener">
-                            Fuente: ${news.sourceName} ↗
+                            <i data-lucide="external-link" style="width: 16px;"></i> Fuente: ${news.sourceName}
                         </a>
                         <div class="actions" style="border-top:none; padding-top:0;">
                             <div class="btn-group"></div>
-                            <button class="btn-read btn-unflip">Volver ↺</button>
+                            <button class="btn-read btn-unflip">Volver ↩</button>
                         </div>
                     </div>
                 </div>
             </div>
         `;
 
-        // Lógica de giro 3D
         const cardInner = card.querySelector('.card-inner');
         const btnFlip = card.querySelector('.btn-flip');
         const btnUnflip = card.querySelector('.btn-unflip');
 
-        btnFlip.addEventListener('click', (e) => {
-            e.stopPropagation();
-            card.classList.add('flipped');
+        // Clic en la tarjeta completa para girar
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
         });
-
-        btnUnflip.addEventListener('click', (e) => {
-            e.stopPropagation();
-            card.classList.remove('flipped');
+        
+        // Evita que el clic en botones internos (fuente, likes) dispare el giro doble
+        card.querySelectorAll('.action-btn, .source-link').forEach(el => {
+            el.addEventListener('click', (e) => e.stopPropagation());
         });
 
         return card;
     }
 
-    // 4. Lógica de renderizado y filtrado múltiple
+    // MODIFICADO: Lógica de Paginación y Filtrado corregido
     function renderFeed() {
-        feedContainer.innerHTML = ''; 
+        feedContainer.innerHTML = '';
         
-        const filteredData = selectedTags.size === 0
+        // Filtra mostrando noticias que contengan AL MENOS UNO de los tags seleccionados
+        const filteredData = selectedTags.size === 0 
             ? newsData 
             : newsData.filter(news => news.tags.some(tag => selectedTags.has(tag)));
         
         if(filteredData.length === 0) {
             feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted);">No hay noticias con las temáticas seleccionadas.</p>`;
+            btnCargarMas.style.display = 'none';
             return;
         }
 
-        filteredData.forEach(news => {
+        // Corta el array para mostrar solo el límite actual
+        const noticiasAMostrar = filteredData.slice(0, limiteNoticias);
+
+        noticiasAMostrar.forEach(news => {
             feedContainer.appendChild(createCard(news));
         });
+
+        // Mostrar u ocultar botón de Cargar Más
+        if (limiteNoticias >= filteredData.length) {
+            btnCargarMas.style.display = 'none';
+        } else {
+            btnCargarMas.style.display = 'block';
+        }
+
+        // Renderiza los íconos de Lucide
+        lucide.createIcons();
     }
 
-    // Manejo de eventos de filtros con Selección Múltiple
-    filterContainer.addEventListener('click', (e) => {
-        if(e.target.classList.contains('filter-btn')) {
-            const tag = e.target.dataset.tag;
-            const allBtn = filterContainer.querySelector('[data-tag="Todos"]');
+    // Evento del botón Cargar Más
+    btnCargarMas.addEventListener('click', () => {
+        limiteNoticias += 25;
+        renderFeed();
+    });
 
+    filterContainer.addEventListener('click', (e) => {
+        if(e.target.classList.contains('filter-btn') && !e.target.classList.contains('toggle-tags-btn')) {
+            const tag = e.target.dataset.tag;
+            
             if (tag === 'Todos') {
                 selectedTags.clear();
-                filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                allBtn.classList.add('active');
             } else {
-                allBtn.classList.remove('active');
                 if (selectedTags.has(tag)) {
                     selectedTags.delete(tag);
-                    e.target.classList.remove('active');
                 } else {
                     selectedTags.add(tag);
-                    e.target.classList.add('active');
-                }
-
-                // Si se deseleccionan todos, reactivar "Todos"
-                if (selectedTags.size === 0) {
-                    allBtn.classList.add('active');
                 }
             }
-
+            
+            // Reiniciar la paginación al filtrar
+            limiteNoticias = 25; 
+            
+            generateFilters(newsData); 
             renderFeed();
         }
     });
 
-    // Iniciar aplicación
     fetchNews();
 </script>
 </body>
