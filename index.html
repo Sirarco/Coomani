@@ -236,23 +236,18 @@
         .cookie-banner.show { transform: translateY(0); }
         .cookie-banner button { background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-        /* Ajustes Forzados para Móvil (Fuentes Grandes y 1 Sola Columna) */
+        /* Ajustes Móviles Corregidos */
         @media (max-width: 850px) {
             html { scroll-snap-type: y mandatory; }
             main { 
-                display: flex !important; 
-                flex-direction: column !important; 
-                padding: 15px !important; 
+                grid-template-columns: 1fr; /* Retorna al grid para respetar las dimensiones */
+                padding: 15px; 
             }
             .news-card { 
-                width: 100% !important; 
-                height: auto !important; 
-                min-height: 460px;
+                width: 100%; 
                 scroll-snap-align: center; 
-                scroll-margin-top: 160px; 
+                scroll-margin-top: 160px; /* Previene que el header tape la noticia al deslizar */
             }
-            .filter-btn { font-size: 1rem !important; padding: 8px 18px !important; }
-            .tag { font-size: 0.85rem !important; padding: 5px 12px !important; }
             #tag-search { max-width: 90%; }
             footer { justify-content: center; gap: 15px; }
             .footer-info span:first-child { display: none; }
@@ -266,7 +261,6 @@
             <button class="login-btn" id="auth-btn">Log In</button>
         </div>
         
-        <!-- Buscador de Tags Predictivo -->
         <div class="search-wrapper">
             <input type="text" id="tag-search" placeholder="🔍 Buscar tag (ej. Anime, Romance)..." autocomplete="off">
         </div>
@@ -337,7 +331,7 @@
     const tagSearchInput = document.getElementById('tag-search');
 
     // ==========================================
-    // AUTENTICACIÓN (Cambio a Magic Link por Correo)
+    // AUTENTICACIÓN (Google Cloud con Redirección)
     // ==========================================
     supabaseClient.auth.onAuthStateChange((event, session) => {
         if (session) {
@@ -350,17 +344,14 @@
             userLikes.clear();
             authBtn.innerText = "Log In";
             
-            // Login por correo (Evita el error 400 de Google Cloud)
+            // Inicio de sesión por Google
             authBtn.onclick = async () => { 
-                const email = prompt("✨ Ingresa tu correo electrónico para iniciar sesión o registrarte:");
-                if(email && email.trim() !== "") {
-                    const { error } = await supabaseClient.auth.signInWithOtp({ email: email.trim() });
-                    if(error) {
-                        alert("Error: " + error.message);
-                    } else {
-                        alert("💌 ¡Te hemos enviado un enlace mágico a tu correo! Ábrelo para entrar automáticamente.");
+                await supabaseClient.auth.signInWithOAuth({ 
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + window.location.pathname
                     }
-                }
+                }); 
             };
             
             if(newsData.length > 0) renderFeed();
@@ -474,9 +465,6 @@
         }
     }
 
-    // ==========================================
-    // LÓGICA DE FILTROS Y BUSCADOR
-    // ==========================================
     function generateFilters(data, searchTerm = '') {
         const conteoTags = {};
         data.forEach(news => {
@@ -488,11 +476,9 @@
 
         let tagsAMostrar = tagsOrdenados;
         
-        // Si hay texto en el buscador, mostrar las coincidencias
         if (searchTerm !== '') {
             tagsAMostrar = tagsOrdenados.filter(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
         } else if (!tagsExpandidos) {
-            // Si no hay búsqueda y no está expandido, mostrar solo 5
             tagsAMostrar = tagsOrdenados.slice(0, 5);
         }
 
@@ -505,7 +491,6 @@
             filterContainer.appendChild(btn);
         });
 
-        // Solo mostrar el botón de Expandir si NO hay búsqueda activa
         if (searchTerm === '' && tagsOrdenados.length > 5) {
             const toggleBtn = document.createElement('button');
             toggleBtn.className = 'filter-btn toggle-tags-btn';
@@ -656,7 +641,6 @@
             }
             limiteNoticias = 25; 
             
-            // Si había búsqueda, limpiarla al seleccionar un tag
             tagSearchInput.value = '';
             
             generateFilters(newsData); 
