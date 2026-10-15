@@ -1,28 +1,97 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>COOMANI | Noticias de Anime</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+    <link rel="icon" type="image/png" href="https://keohrixjwiwzkrntfkht.supabase.co/storage/v1/object/public/Coomani/favicon-32x32.png">
+    
+    <!-- Tipografía redondeada para el logo y UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700;900&display=swap" rel="stylesheet">
+    
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
-            --bg-color: #f4f6f8;
-            --card-bg: #ffffff;
-            --text-main: #1c1e21;
-            --text-muted: #65676b;
-            --primary: #ff6b00;
-            --primary-hover: #e65c00;
+            --bg-color: #FBF9F5;
+            --header-bg: rgba(247, 244, 235, 0.95);
+            --card-bg: #FFFFFF;
+            --text-main: #1E1E1E;
+            --text-muted: #504D46;
+            --primary: #E64A19;
+            --primary-hover: #C62828;
+            --border-soft: #ECE7DC;
+            
+            --tag-bg: #F1ECE1;
+            --tag-text: #1E1E1E;
+            --filter-bg: #ECE7DC;
+            --filter-text: #504D46;
+            --filter-active-bg: #1E1E1E;
+            --filter-active-text: #FFFFFF;
+            --btn-util-bg: #1E1E1E;
+            --btn-util-text: #FFFFFF;
+            --search-bg: #FFFFFF;
+            --search-border: #E6E1D3;
+            
             --radius: 20px; 
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+[data-theme="dim"] {
+            /* TEMA TENUE: Atardecer / Sepia Oscuro (Equilibrio intermedio real) */
+            --bg-color: #2D2B29;
+            --header-bg: rgba(54, 52, 49, 0.98);
+            --card-bg: #3C3935;
+            --text-main: #EFECE6;
+            --text-muted: #A19D95;
+            --primary: #F05A28;
+            --primary-hover: #D9481C;
+            --border-soft: #534F4A;
+            
+            --tag-bg: #534F4A;
+            --tag-text: #EFECE6;
+            --filter-bg: #534F4A;
+            --filter-text: #EFECE6;
+            --filter-active-bg: #EFECE6;
+            --filter-active-text: #2D2B29;
+            --btn-util-bg: #EFECE6;
+            --btn-util-text: #2D2B29;
+            --search-bg: #211F1D;
+            --search-border: #534F4A;
+        }
+
+        [data-theme="dark"] {
+            /* TEMA OSCURO: Profundidad y relieve (Onyx y Carbón) */
+            --bg-color: #0F1115;
+            --header-bg: rgba(22, 24, 29, 0.98);
+            --card-bg: #1B1E24;
+            --text-main: #E4E6EB;
+            --text-muted: #9AA0A6;
+            --primary: #FF5722;
+            --primary-hover: #FF7043;
+            --border-soft: #2D3139;
+            
+            --tag-bg: #2D3139;
+            --tag-text: #E4E6EB;
+            --filter-bg: #2D3139;
+            --filter-text: #E4E6EB;
+            --filter-active-bg: #E4E6EB;
+            --filter-active-text: #0F1115;
+            --btn-util-bg: #E4E6EB;
+            --btn-util-text: #0F1115;
+            --search-bg: #0A0B0E;
+            --search-border: #2D3139;
+        }
+
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
             padding: 0;
             display: flex;
@@ -30,14 +99,13 @@
             align-items: center;
             min-height: 100vh;
             padding-bottom: 60px;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
         
         header {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            top: 0; left: 0; width: 100%;
+            background: var(--header-bg);
             backdrop-filter: blur(12px);
             z-index: 1000;
             box-shadow: 0 2px 15px rgba(0,0,0,0.05);
@@ -48,121 +116,130 @@
             transition: var(--transition);
             box-sizing: border-box;
         }
-        header.shrink {
-            padding: 8px 0 6px 0;
-            background: rgba(255, 255, 255, 0.95);
-        }
+        header.shrink { padding: 8px 0 6px 0; }
+        
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
-            max-width: 800px;
+            width: 100%; max-width: 800px;
             padding: 0 20px;
             box-sizing: border-box;
             margin-bottom: 8px;
             transition: var(--transition);
         }
         header.shrink .header-top { margin-bottom: 4px; }
+        
         .logo {
+            font-family: 'Quicksand', sans-serif;
             font-size: 1.8rem;
             font-weight: 900;
             color: var(--text-main);
             letter-spacing: -1px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            display: flex; align-items: center; gap: 6px;
             text-transform: uppercase;
             transition: var(--transition);
         }
         header.shrink .logo { font-size: 1.2rem; }
         .logo span { color: var(--primary); }
-        
-        .login-btn {
-            background: var(--text-main);
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: var(--transition);
-        }
-        .login-btn:hover { background: var(--primary); }
 
-        /* Buscador de Tags */
-        .search-wrapper {
-            width: 100%;
-            max-width: 800px;
-            padding: 0 20px;
-            box-sizing: border-box;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: center;
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        
+        .theme-switch {
+            display: flex; gap: 4px;
+            background: var(--border-soft);
+            padding: 4px; border-radius: 20px;
             transition: var(--transition);
-            overflow: hidden;
-            max-height: 50px;
         }
-        header.shrink .search-wrapper {
-            max-height: 0;
-            margin-bottom: 0;
-            opacity: 0;
+        .theme-btn {
+            background: transparent; border: none; cursor: pointer;
+            color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; border-radius: 50%;
+            transition: var(--transition);
         }
-        #tag-search {
-            width: 100%;
-            max-width: 400px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid #e5e7eb;
-            background: #f9fafb;
-            font-family: inherit;
+        .theme-btn:hover, .theme-btn.active {
+            color: var(--text-main); background: var(--card-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .user-greeting {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
             font-size: 0.9rem;
-            outline: none;
+            color: var(--text-main);
+        }
+        .user-emoji {
+            font-size: 1.3rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
+        }
+
+        .login-btn {
+            background: var(--btn-util-bg); color: var(--btn-util-text);
+            border: none; padding: 6px 16px; border-radius: 20px;
+            font-weight: 700; cursor: pointer; font-size: 0.85rem;
             transition: var(--transition);
+        }
+        .login-btn:hover { background: var(--primary); color: white; }
+
+        /* Banner de registro */
+        .auth-banner {
+            background: var(--filter-active-bg);
+            color: var(--filter-active-text);
+            width: 100%;
             text-align: center;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: var(--transition);
         }
-        #tag-search:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
-            background: #ffffff;
+        .auth-banner:hover { background: var(--primary); }
+
+        .search-wrapper {
+            width: 100%; max-width: 800px;
+            padding: 0 20px; box-sizing: border-box;
+            margin-bottom: 12px; display: flex; justify-content: center;
+            transition: var(--transition); overflow: hidden; max-height: 50px;
         }
+        header.shrink .search-wrapper { max-height: 0; margin-bottom: 0; opacity: 0; }
+        #tag-search {
+            width: 100%; max-width: 400px; padding: 8px 16px;
+            border-radius: 20px; border: 1px solid var(--search-border);
+            background: var(--search-bg); color: var(--text-main);
+            font-family: inherit; font-size: 0.9rem; outline: none;
+            transition: var(--transition); text-align: center;
+        }
+        #tag-search:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(230, 74, 25, 0.1); }
 
         .filters {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            width: 100%;
-            max-width: 800px;
-            padding: 0 20px 6px 20px;
-            box-sizing: border-box;
-            scrollbar-width: none;
-            justify-content: center;
-            flex-wrap: wrap;
+            display: flex; gap: 8px; overflow-x: auto;
+            width: 100%; max-width: 800px; padding: 0 20px 6px 20px;
+            box-sizing: border-box; scrollbar-width: none;
+            justify-content: center; flex-wrap: wrap;
         }
         .filters::-webkit-scrollbar { display: none; }
         .filter-btn {
-            background: #f3f4f6;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            white-space: nowrap;
+            background: var(--filter-bg); border: none; padding: 6px 14px;
+            border-radius: 20px; cursor: pointer; font-weight: 700;
+            font-size: 0.8rem; color: var(--filter-text); white-space: nowrap;
             transition: var(--transition);
         }
-        .filter-btn:hover { background: #e5e7eb; }
-        .filter-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(255, 107, 0, 0.3); }
-        .toggle-tags-btn { background: var(--text-main); color: white; }
-        .toggle-tags-btn:hover { background: #333; }
+        .filter-btn:hover { filter: brightness(0.95); }
+        .filter-btn.active { background: var(--filter-active-bg); color: var(--filter-active-text); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
 
         .view-tabs { display: flex; justify-content: center; gap: 16px; margin-top: 6px; width: 100%; }
         .tab-btn { background: transparent; border: none; color: var(--text-muted); font-weight: 800; font-size: 0.85rem; cursor: pointer; padding-bottom: 4px; border-bottom: 2px solid transparent; transition: var(--transition); }
         .tab-btn.active { color: var(--text-main); border-bottom: 2px solid var(--primary); }
 
-        .spacer { height: 180px; transition: var(--transition); }
+        .spacer { height: 210px; transition: var(--transition); }
         header.shrink + .spacer { height: 110px; }
         
         #loader { padding: 40px 20px; text-align: center; color: var(--text-muted); font-weight: 700; font-size: 1rem; display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -170,95 +247,120 @@
         .kawaii-emojis span { animation: bounce 0.6s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5); }
         .kawaii-emojis span:nth-child(2) { animation-delay: 0.2s; }
         .kawaii-emojis span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-15px); }
-        }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-15px); } }
         
         main {
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            box-sizing: border-box;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
-            flex: 1;
+            width: 100%; max-width: 1200px; padding: 20px; box-sizing: border-box;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px; flex: 1;
         }
         
-        .news-card { background: transparent; perspective: 1000px; height: 460px; cursor: pointer; }
-        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .news-card { background: transparent; perspective: 1000px; height: 460px; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
         .news-card.flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--radius); background: var(--card-bg); overflow: hidden; display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,0.04); box-sizing: border-box; }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--radius); background: var(--card-bg); overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border-soft); box-sizing: border-box; }
         .card-front { justify-content: space-between; }
-        .card-back { transform: rotateY(180deg); padding: 24px; justify-content: space-between; background: #ffffff; }
-        .card-img { width: 100%; height: 190px; object-fit: cover; background-color: #e5e7eb; }
+        .card-back { transform: rotateY(180deg); padding: 24px; justify-content: space-between; background: var(--card-bg); }
+        
+        .card-img { width: 100%; height: 190px; object-fit: cover; background-color: var(--border-soft); cursor: pointer; }
         .card-content { padding: 16px 20px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
         .card-header-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .date { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
         .title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 0 0 10px 0; line-height: 1.3; }
-        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
         
-        .tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        @media (hover: hover) { .tag:hover { transform: scale(1.08); } }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .tag { background: var(--tag-bg); color: var(--tag-text); font-size: 0.65rem; padding: 4px 10px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; transition: var(--transition); cursor: pointer; border: 1px solid transparent; }
+        .tag:hover { transform: scale(1.05); }
         .tag:active { transform: scale(0.95); }
+        .tag.active { background: var(--filter-active-bg); color: var(--filter-active-text); border-color: var(--filter-active-bg); }
 
         .back-title { font-size: 1rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px; border-bottom: 2px solid var(--primary); padding-bottom: 6px; }
         .back-text { font-size: 0.9rem; color: var(--text-main); line-height: 1.5; overflow-y: auto; flex: 1; margin-bottom: 12px; }
         .source-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 800; margin-bottom: 12px; }
         .source-link:hover { text-decoration: underline; }
         
-        .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f2f5; padding-top: 12px; }
+        .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-soft); padding-top: 12px; }
         .btn-group { display: flex; gap: 8px; }
         
-        .action-btn { background: #f9fafb; border: 1px solid #f3f4f6; cursor: pointer; color: var(--text-muted); transition: var(--transition); display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; }
-        .action-btn:hover { background: #f3f4f6; transform: scale(1.1); color: var(--primary); }
+        .action-btn { background: var(--bg-color); border: 1px solid var(--border-soft); cursor: pointer; color: var(--text-muted); transition: var(--transition); display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; }
+        .action-btn:hover { border-color: var(--text-muted); color: var(--text-main); transform: scale(1.1); }
         
         @keyframes heartPop { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
-        .action-btn.liked { color: #ff3b30; border-color: #ff3b30; }
-        .action-btn.liked i { fill: #ff3b30; animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .action-btn.liked { background: var(--primary); border-color: var(--primary); color: white; }
+        .action-btn.liked i { fill: white; color: white; animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 
-        .btn-read { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2); }
+        .btn-read { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: var(--transition); box-shadow: 0 4px 10px rgba(230, 74, 25, 0.2); }
         .btn-read:hover { background: var(--primary-hover); transform: scale(1.05); }
         
-        .btn-cargar-mas { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px; font-weight: 800; cursor: pointer; margin: 10px auto 30px auto; display: block; transition: var(--transition); box-shadow: 0 4px 10px rgba(255, 107, 0, 0.2); }
-        .btn-cargar-mas:hover { background: var(--primary-hover); transform: scale(1.05); }
+        .btn-cargar-mas { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 20px; font-weight: 800; cursor: pointer; margin: 10px auto 30px auto; display: block; transition: var(--transition); box-shadow: 0 4px 10px rgba(230, 74, 25, 0.2); }
+        
+        /* Botton Sheet Modal para Tags */
+        .tags-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .tags-modal-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .tags-modal {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--card-bg);
+            border-radius: 24px 24px 0 0;
+            padding: 20px; box-sizing: border-box;
+            z-index: 2000;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 80vh; display: flex; flex-direction: column;
+        }
+        .tags-modal.show { transform: translateY(0); }
+        .tags-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .tags-modal-header h3 { margin: 0; font-family: 'Quicksand', sans-serif; color: var(--text-main); }
+        .close-modal-btn { background: var(--border-soft); border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); }
+        .modal-tags-container { display: flex; flex-wrap: wrap; gap: 8px; overflow-y: auto; padding-bottom: 20px; }
 
-        footer { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #ffffff; border-top: 1px solid #e5e7eb; padding: 0 20px; height: 50px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; box-sizing: border-box; z-index: 1000; }
+        footer { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border-soft); padding: 0 20px; height: 50px; display: flex; flex-direction: row; align-items: center; justify-content: space-between; box-sizing: border-box; z-index: 1000; }
         .social-icons { display: flex; gap: 16px; }
         .social-icons a { color: var(--text-muted); text-decoration: none; transition: var(--transition); display: flex; align-items: center; }
         .social-icons a:hover { color: var(--primary); transform: translateY(-2px); }
         .footer-info { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 8px; align-items: center; }
-        .footer-info code { background: #f3f4f6; padding: 2px 6px; border-radius: 6px; font-weight: 700; color: var(--primary); }
+        .footer-info code { background: var(--border-soft); padding: 2px 6px; border-radius: 6px; font-weight: 700; color: var(--primary); }
 
-        .cookie-banner { position: fixed; bottom: 50px; left: 0; width: 100%; background: #1c1e21; color: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 999; box-sizing: border-box; font-size: 0.85rem; transform: translateY(100%); transition: transform 0.4s ease-in-out; }
+        .cookie-banner { position: fixed; bottom: 50px; left: 0; width: 100%; background: var(--filter-active-bg); color: var(--filter-active-text); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 999; box-sizing: border-box; font-size: 0.85rem; transform: translateY(100%); transition: transform 0.4s ease-in-out; }
         .cookie-banner.show { transform: translateY(0); }
         .cookie-banner button { background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-        /* Ajustes Móviles Corregidos */
         @media (max-width: 850px) {
             html { scroll-snap-type: y mandatory; }
-            main { 
-                grid-template-columns: 1fr; /* Retorna al grid para respetar las dimensiones */
-                padding: 15px; 
-            }
-            .news-card { 
-                width: 100%; 
-                scroll-snap-align: center; 
-                scroll-margin-top: 160px; /* Previene que el header tape la noticia al deslizar */
-            }
+            main { grid-template-columns: 1fr; padding: 15px; }
+            .news-card { width: 100%; scroll-snap-align: center; scroll-margin-top: 160px; }
             #tag-search { max-width: 90%; }
             footer { justify-content: center; gap: 15px; }
             .footer-info span:first-child { display: none; }
+            .theme-switch { display: none; }
         }
     </style>
 </head>
 <body>
     <header id="main-header">
-        <div class="header-top">
-            <div class="logo">COOMANI<span>.</span></div>
-            <button class="login-btn" id="auth-btn">Log In</button>
+        <div id="auth-banner" class="auth-banner">
+            ✨ ¡Regístrate para personalizar tu feed y guardar tus favoritos!
+        </div>
+        <div class="header-top" style="margin-top: 8px;">
+            <div class="logo">
+                <img src="https://keohrixjwiwzkrntfkht.supabase.co/storage/v1/object/public/Coomani/logo-coomani.png" alt="Logo Coomani" style="height: 1.2em; width: auto; object-fit: contain;">
+                COOMANI<span>.</span>
+            </div>
+            
+            <div class="header-actions">
+                <div class="theme-switch" id="theme-switch">
+                    <button class="theme-btn" data-set-theme="light" title="Claro"><i data-lucide="sun" style="width: 16px;"></i></button>
+                    <button class="theme-btn" data-set-theme="dim" title="Tenue"><i data-lucide="cloud-moon" style="width: 16px;"></i></button>
+                    <button class="theme-btn" data-set-theme="dark" title="Oscuro"><i data-lucide="moon" style="width: 16px;"></i></button>
+                </div>
+                <div class="user-greeting" id="user-greeting"></div>
+                <button class="theme-btn" id="logout-btn" title="Cerrar sesión" style="display:none;"><i data-lucide="log-out" style="width: 18px;"></i></button>
+                <button class="login-btn" id="auth-btn">Log In</button>
+            </div>
         </div>
         
         <div class="search-wrapper">
@@ -275,16 +377,22 @@
     <div class="spacer"></div>
     
     <div id="loader">
-        <div class="kawaii-emojis">
-            <span>🕵️‍♀️</span>
-            <span>🔎</span>
-            <span>🌸</span>
-        </div>
+        <div class="kawaii-emojis"><span>🕵️‍♀️</span><span>🔎</span><span>🌸</span></div>
         <span id="loader-text">Investigando las mejores noticias para ti...</span>
     </div>
     
     <main id="feed"></main>
     <button id="btn-cargar-mas" class="btn-cargar-mas" style="display: none;">Cargar más noticias</button>
+
+    <!-- Modal de Tags para Móviles -->
+    <div class="tags-modal-overlay" id="tags-overlay"></div>
+    <div class="tags-modal" id="tags-modal">
+        <div class="tags-modal-header">
+            <h3>Explorar Categorías</h3>
+            <button class="close-modal-btn" id="close-tags-modal"><i data-lucide="x" style="width: 18px;"></i></button>
+        </div>
+        <div class="modal-tags-container" id="modal-tags-container"></div>
+    </div>
 
     <div id="cookie-banner" class="cookie-banner">
         <span>Utilizamos cookies para guardar tus preferencias de "Me gusta" y mejorar tus recomendaciones.</span>
@@ -307,102 +415,133 @@
     </footer>
 
 <script>
+    // ==========================================
+    // TEMAS VISUALES
+    // ==========================================
+    const savedTheme = localStorage.getItem('coomani_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.querySelectorAll('.theme-btn[data-set-theme]').forEach(btn => {
+        if(btn.dataset.setTheme === savedTheme) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+            const theme = btn.dataset.setTheme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('coomani_theme', theme);
+            document.querySelectorAll('.theme-btn[data-set-theme]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
     const API_URL = "https://script.google.com/macros/s/AKfycbwmSPoefuWxpL9qpydTGhLFgPepxdDZ0tY4db4uAUippymIcErFBAmTSGMbmiTDtDUC/exec";      
     const SUPABASE_URL = 'https://keohrixjwiwzkrntfkht.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtlb2hyaXhqd2l3emtybnRma2h0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNjg1MzgsImV4cCI6MjEwNzY0NDUzOH0.p8CuDNNUpr1veC5ZzFGKhaFgfr171SQNpiWRgvpbujE';
-    
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let newsData = [];
     let selectedTags = new Set(); 
     let limiteNoticias = 25;
-    let tagsExpandidos = false;
     let currentView = 'todo'; 
-    
     let currentUser = null;
     let userLikes = new Set();
 
+    // Emojis de perfil
+    const EMOJIS = ['🦊', '🐉', '🐺', '🦄', '🐍', '🦉', '🐾', '🦑'];
+    let currentEmoji = EMOJIS[0];
+
     const feedContainer = document.getElementById('feed');
     const filterContainer = document.getElementById('filter-container');
-    const loader = document.getElementById('loader');
-    const loaderText = document.getElementById('loader-text');
-    const btnCargarMas = document.getElementById('btn-cargar-mas');
-    const authBtn = document.getElementById('auth-btn');
     const tagSearchInput = document.getElementById('tag-search');
+    const authBtn = document.getElementById('auth-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const authBanner = document.getElementById('auth-banner');
+    const greetingDiv = document.getElementById('user-greeting');
+
+    const tagsModal = document.getElementById('tags-modal');
+    const tagsOverlay = document.getElementById('tags-overlay');
+    const modalTagsContainer = document.getElementById('modal-tags-container');
 
     // ==========================================
-    // AUTENTICACIÓN (Google Cloud con Redirección)
+    // AUTENTICACIÓN Y PERFIL
     // ==========================================
     supabaseClient.auth.onAuthStateChange((event, session) => {
         if (session) {
             currentUser = session.user;
-            authBtn.innerText = "Cerrar Sesión";
-            authBtn.onclick = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
+            authBanner.style.display = 'none';
+            authBtn.style.display = 'none';
+            logoutBtn.style.display = 'flex';
+            
+            const firstName = session.user.user_metadata?.full_name?.split(' ')[0] || 'Lector';
+            currentEmoji = session.user.user_metadata?.avatar_emoji || EMOJIS[0];
+            
+            greetingDiv.style.display = 'flex';
+            greetingDiv.innerHTML = `Konnichiwa, ${firstName} <span class="user-emoji" id="user-emoji-btn">${currentEmoji}</span>`;
+            
+            document.getElementById('user-emoji-btn').addEventListener('click', cycleEmoji);
+            logoutBtn.onclick = async () => { await supabaseClient.auth.signOut(); window.location.reload(); };
+            
             fetchUserLikes();
         } else {
             currentUser = null;
             userLikes.clear();
-            authBtn.innerText = "Log In";
+            authBanner.style.display = 'flex';
+            authBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+            greetingDiv.style.display = 'none';
             
-            // Inicio de sesión por Google
-            authBtn.onclick = async () => { 
+            const loginAction = async () => { 
                 await supabaseClient.auth.signInWithOAuth({ 
                     provider: 'google',
-                    options: {
-                        redirectTo: window.location.origin + window.location.pathname
-                    }
+                    options: { redirectTo: window.location.origin + window.location.pathname }
                 }); 
             };
+            authBtn.onclick = loginAction;
+            authBanner.onclick = loginAction;
             
             if(newsData.length > 0) renderFeed();
         }
     });
 
+    async function cycleEmoji() {
+        const el = document.getElementById('user-emoji-btn');
+        el.style.transform = 'scale(1.4)';
+        setTimeout(() => el.style.transform = 'scale(1)', 200);
+        
+        let idx = EMOJIS.indexOf(currentEmoji);
+        currentEmoji = EMOJIS[(idx + 1) % EMOJIS.length];
+        el.innerText = currentEmoji;
+        
+        await supabaseClient.auth.updateUser({ data: { avatar_emoji: currentEmoji } });
+    }
+
     async function fetchUserLikes() {
         if (!currentUser) return;
-        const { data, error } = await supabaseClient.from('user_likes').select('news_id');
-        if (data) {
-            userLikes = new Set(data.map(d => String(d.news_id)));
-        }
+        const { data } = await supabaseClient.from('user_likes').select('news_id');
+        if (data) userLikes = new Set(data.map(d => String(d.news_id)));
         if(newsData.length > 0) renderFeed();
     }
 
     async function toggleLike(e, newsId, btnEl) {
         e.stopPropagation();
-        if (!currentUser) {
-            alert("Debes iniciar sesión para guardar tus noticias favoritas.");
-            return;
-        }
+        if (!currentUser) { alert("¡Regístrate para guardar tus noticias favoritas!"); return; }
 
         const idStr = String(newsId);
-        const icon = btnEl.querySelector('i');
-
         if (userLikes.has(idStr)) {
             userLikes.delete(idStr);
             btnEl.classList.remove('liked');
-            icon.setAttribute('fill', 'none');
             await supabaseClient.from('user_likes').delete().match({ user_id: currentUser.id, news_id: idStr });
         } else {
             userLikes.add(idStr);
             btnEl.classList.add('liked');
-            icon.setAttribute('fill', '#ff3b30');
             await supabaseClient.from('user_likes').insert([{ user_id: currentUser.id, news_id: idStr }]);
         }
-        
         if(currentView === 'likes') renderFeed();
     }
 
+    // ==========================================
+    // UI Y COMPARTIR
+    // ==========================================
     window.addEventListener('scroll', () => {
         if (window.scrollY > 40) header.classList.add('shrink');
         else header.classList.remove('shrink');
-    });
-
-    if (!localStorage.getItem('cookiesAccepted')) {
-        setTimeout(() => document.getElementById('cookie-banner').classList.add('show'), 1500);
-    }
-    document.getElementById('accept-cookies').addEventListener('click', () => {
-        localStorage.setItem('cookiesAccepted', 'true');
-        document.getElementById('cookie-banner').classList.remove('show');
     });
 
     document.getElementById('view-tabs').addEventListener('click', (e) => {
@@ -415,20 +554,6 @@
         }
     });
 
-    const tagColors = [
-        { bg: '#fff0e6', text: '#cc5500' }, { bg: '#e0f2fe', text: '#0369a1' }, 
-        { bg: '#fce7f3', text: '#be185d' }, { bg: '#fef3c7', text: '#b45309' }, 
-        { bg: '#f3e8ff', text: '#6b21a8' }, { bg: '#dcfce7', text: '#15803d' }, 
-        { bg: '#fee2e2', text: '#991b1b' }  
-    ];
-
-    function getTagStyle(tagName) {
-        let hash = 0;
-        for (let i = 0; i < tagName.length; i++) hash = tagName.charCodeAt(i) + ((hash << 5) - hash);
-        const index = Math.abs(hash) % tagColors.length;
-        return `background-color: ${tagColors[index].bg}; color: ${tagColors[index].text};`;
-    }
-
     function formatDate(dateStr) {
         if(!dateStr) return 'Reciente';
         const d = new Date(dateStr);
@@ -439,74 +564,110 @@
         return `${dd}:${mm}:${yy}`;
     }
 
-    function shareNews(e, title, url) {
+    function shareNews(e, title) {
         e.stopPropagation();
         if (navigator.share) {
-            navigator.share({ title: title, text: 'Mira esta noticia en COOMANI', url: url }).catch(console.error);
+            // Comparte el Título exacto de la noticia + URL de Coomani
+            navigator.share({ 
+                title: 'Noticia en COOMANI', 
+                text: `${title} - Mira esta noticia en COOMANI`, 
+                url: window.location.origin + window.location.pathname 
+            }).catch(console.error);
         } else {
             alert("La función de compartir no está soportada en este navegador.");
         }
     }
 
+    // ==========================================
+    // TAGS GLOBALES (Toggle)
+    // ==========================================
+    window.toggleTagFilter = function(e, tag) {
+        e.stopPropagation();
+        if (tag === 'Todos') selectedTags.clear();
+        else {
+            if (selectedTags.has(tag)) selectedTags.delete(tag);
+            else selectedTags.add(tag);
+        }
+        limiteNoticias = 25; 
+        tagSearchInput.value = '';
+        generateFilters(newsData); 
+        renderFeed();
+        
+        // Si el click fue en el modal, cerrarlo opcionalmente, pero lo dejaremos abierto para múltiple selección
+    }
+
+    // Modal Events
+    document.getElementById('close-tags-modal').onclick = closeTagsModal;
+    tagsOverlay.onclick = closeTagsModal;
+    
+    function openTagsModal() {
+        tagsModal.classList.add('show');
+        tagsOverlay.classList.add('show');
+    }
+    function closeTagsModal() {
+        tagsModal.classList.remove('show');
+        tagsOverlay.classList.remove('show');
+    }
+
+    // ==========================================
+    // CARGA Y RENDERIZADO
+    // ==========================================
     async function fetchNews() {
         try {
-            const response = await fetch(API_URL, { method: 'GET', mode: 'cors', redirect: 'follow' });
+            const response = await fetch(API_URL, { method: 'GET', mode: 'cors' });
             const data = await response.json();
-            
             newsData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            loader.style.display = 'none';
+            document.getElementById('loader').style.display = 'none';
             generateFilters(newsData);
             renderFeed();
         } catch (error) {
-            console.error("Error de carga:", error);
+            console.error(error);
             document.querySelector('.kawaii-emojis').innerHTML = "<span>(ಥ﹏ಥ)</span>";
-            loaderText.innerText = "Oops... No pudimos encontrar las noticias. ¡Inténtalo de nuevo más tarde!";
+            document.getElementById('loader-text').innerText = "Oops... No pudimos encontrar las noticias. ¡Inténtalo de nuevo!";
         }
     }
 
     function generateFilters(data, searchTerm = '') {
         const conteoTags = {};
-        data.forEach(news => {
-            news.tags.forEach(tag => { conteoTags[tag] = (conteoTags[tag] || 0) + 1; });
-        });
-
+        data.forEach(news => news.tags.forEach(t => conteoTags[t] = (conteoTags[t] || 0) + 1));
         const tagsOrdenados = Object.keys(conteoTags).sort((a, b) => conteoTags[b] - conteoTags[a]);
-        filterContainer.innerHTML = `<button class="filter-btn ${selectedTags.size === 0 ? 'active' : ''}" data-tag="Todos">Todos</button>`;
+        
+        filterContainer.innerHTML = `<button class="filter-btn ${selectedTags.size === 0 ? 'active' : ''}" onclick="toggleTagFilter(event, 'Todos')">Todos</button>`;
+        modalTagsContainer.innerHTML = '';
 
         let tagsAMostrar = tagsOrdenados;
+        if (searchTerm !== '') tagsAMostrar = tagsOrdenados.filter(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
         
-        if (searchTerm !== '') {
-            tagsAMostrar = tagsOrdenados.filter(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-        } else if (!tagsExpandidos) {
-            tagsAMostrar = tagsOrdenados.slice(0, 5);
-        }
-
-        tagsAMostrar.forEach(tag => {
+        // El Header muestra máx 5 (o los filtrados)
+        const topTags = searchTerm !== '' ? tagsAMostrar : tagsOrdenados.slice(0, 5);
+        
+        topTags.forEach(tag => {
             const btn = document.createElement('button');
-            btn.className = 'filter-btn';
-            if (selectedTags.has(tag)) btn.classList.add('active');
-            btn.dataset.tag = tag;
+            btn.className = `filter-btn ${selectedTags.has(tag) ? 'active' : ''}`;
             btn.innerText = tag;
+            btn.onclick = (e) => toggleTagFilter(e, tag);
             filterContainer.appendChild(btn);
+        });
+
+        // Poblado del Modal (Muestra todos)
+        tagsOrdenados.forEach(tag => {
+            const btn = document.createElement('button');
+            btn.className = `filter-btn ${selectedTags.has(tag) ? 'active' : ''}`;
+            btn.innerText = tag;
+            btn.onclick = (e) => toggleTagFilter(e, tag);
+            modalTagsContainer.appendChild(btn);
         });
 
         if (searchTerm === '' && tagsOrdenados.length > 5) {
             const toggleBtn = document.createElement('button');
             toggleBtn.className = 'filter-btn toggle-tags-btn';
-            toggleBtn.innerText = tagsExpandidos ? 'Ver menos...' : 'Ver más...';
-            toggleBtn.onclick = (e) => {
-                e.stopPropagation();
-                tagsExpandidos = !tagsExpandidos;
-                generateFilters(data); 
-            };
+            toggleBtn.innerText = 'Ver más...';
+            toggleBtn.onclick = (e) => { e.stopPropagation(); openTagsModal(); };
             filterContainer.appendChild(toggleBtn);
         }
     }
 
-    tagSearchInput.addEventListener('input', (e) => {
-        generateFilters(newsData, e.target.value.trim());
-    });
+    tagSearchInput.addEventListener('input', (e) => generateFilters(newsData, e.target.value.trim()));
 
     function createCard(news) {
         const card = document.createElement('div');
@@ -514,28 +675,30 @@
         
         const isLiked = userLikes.has(String(news.id));
         const likeClass = isLiked ? 'liked' : '';
-        const fillAttr = isLiked ? 'fill="#ff3b30"' : '';
+
+        // Tags clickeables dentro de la tarjeta
+        const tagsHtml = news.tags.map((tag, idx) => {
+            const extraStyle = idx === 0 && !selectedTags.has(tag) ? 'color: var(--primary);' : '';
+            const activeClass = selectedTags.has(tag) ? 'active' : '';
+            return `<span class="tag ${activeClass}" style="${extraStyle}" onclick="toggleTagFilter(event, '${tag}')">${tag}</span>`;
+        }).join('');
 
         card.innerHTML = `
             <div class="card-inner">
                 <div class="card-front">
-                    <img src="${news.img}" alt="Imagen noticia" class="card-img" loading="lazy">
+                    <img src="${news.img}" alt="Imagen noticia" class="card-img btn-flip" loading="lazy" title="Clic para girar">
                     <div class="card-content">
                         <div>
-                            <div class="card-header-info">
-                                <span class="date">📅 ${formatDate(news.date)}</span>
-                            </div>
+                            <div class="card-header-info"><span class="date">📅 ${formatDate(news.date)}</span></div>
                             <h2 class="title">${news.title}</h2>
-                            <div class="tags">
-                                ${news.tags.map(tag => `<span class="tag" style="${getTagStyle(tag)}">${tag}</span>`).join('')}
-                            </div>
+                            <div class="tags">${tagsHtml}</div>
                         </div>
                         <div class="actions">
                             <div class="btn-group">
                                 <button class="action-btn like-btn ${likeClass}" onclick="toggleLike(event, '${news.id}', this)" title="Me gusta">
-                                    <i data-lucide="heart" style="width: 18px;" ${fillAttr}></i>
+                                    <i data-lucide="heart" style="width: 18px;"></i>
                                 </button>
-                                <button class="action-btn" onclick="shareNews(event, '${news.title}', '${news.sourceUrl}')" title="Compartir">
+                                <button class="action-btn" onclick="shareNews(event, '${news.title}')" title="Compartir">
                                     <i data-lucide="share-2" style="width: 18px;"></i>
                                 </button>
                             </div>
@@ -547,8 +710,8 @@
                     <div>
                         <div class="back-title">${news.title}</div>
                         <div class="back-text">
-                            <p><strong>Resumen:</strong> ${news.summary}</p>
-                            <p><strong>Profundidad:</strong> ${news.context}</p>
+                            <p>${news.summary}</p>
+                            <p>${news.context}</p>
                         </div>
                     </div>
                     <div>
@@ -564,10 +727,20 @@
             </div>
         `;
 
-        card.addEventListener('click', () => card.classList.toggle('flipped'));
+        // Lógica de Giro: Botones y Clic en Imagen
         card.querySelectorAll('.btn-flip, .btn-unflip').forEach(el => {
             el.addEventListener('click', (e) => { e.stopPropagation(); card.classList.toggle('flipped'); });
         });
+
+        // Lógica de Giro: Swipe Horizontal (Deslizar) para Móviles
+        let touchstartX = 0;
+        let touchendX = 0;
+        card.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
+        card.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            // Si desliza más de 50px a la izquierda o derecha, gira
+            if (Math.abs(touchendX - touchstartX) > 50) card.classList.toggle('flipped');
+        }, {passive: true});
 
         return card;
     }
@@ -578,33 +751,31 @@
 
         if (currentView === 'likes') {
             if (!currentUser) {
-                feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Inicia sesión para ver tu historial de Me Gusta.</p>`;
-                btnCargarMas.style.display = 'none';
-                return;
+                feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Inicia sesión para ver tu historial de favoritos.</p>`;
+                document.getElementById('btn-cargar-mas').style.display = 'none';
+                lucide.createIcons(); return;
             }
             targetData = newsData.filter(n => userLikes.has(String(n.id)));
             if (targetData.length === 0) {
                 feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Aún no has guardado ninguna noticia.</p>`;
-                btnCargarMas.style.display = 'none';
-                return;
+                document.getElementById('btn-cargar-mas').style.display = 'none';
+                lucide.createIcons(); return;
             }
         } 
         else if (currentView === 'feed') {
             if (!currentUser || userLikes.size === 0) {
-                feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Dale "Me Gusta" a algunas noticias para que nuestro algoritmo te recomiende contenido similar.</p>`;
-                btnCargarMas.style.display = 'none';
-                return;
+                feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Dale "Me Gusta" a algunas noticias para recomendarte contenido similar.</p>`;
+                document.getElementById('btn-cargar-mas').style.display = 'none';
+                lucide.createIcons(); return;
             }
             let likedTags = new Set();
-            newsData.forEach(n => {
-                if(userLikes.has(String(n.id))) n.tags.forEach(t => likedTags.add(t));
-            });
+            newsData.forEach(n => { if(userLikes.has(String(n.id))) n.tags.forEach(t => likedTags.add(t)); });
             targetData = newsData.filter(n => !userLikes.has(String(n.id)) && n.tags.some(tag => likedTags.has(tag)));
             
             if (targetData.length === 0) {
-                feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Estás al día. No hay nuevas recomendaciones por ahora.</p>`;
-                btnCargarMas.style.display = 'none';
-                return;
+                feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">Estás al día. No hay recomendaciones nuevas.</p>`;
+                document.getElementById('btn-cargar-mas').style.display = 'none';
+                lucide.createIcons(); return;
             }
         }
 
@@ -614,39 +785,18 @@
         
         if(targetData.length === 0 && currentView === 'todo') {
             feedContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color: var(--text-muted); margin-top:40px;">No hay noticias con las temáticas seleccionadas.</p>`;
-            btnCargarMas.style.display = 'none';
-            return;
+            document.getElementById('btn-cargar-mas').style.display = 'none';
+            lucide.createIcons(); return;
         }
 
         const noticiasAMostrar = targetData.slice(0, limiteNoticias);
         noticiasAMostrar.forEach(news => feedContainer.appendChild(createCard(news)));
 
-        btnCargarMas.style.display = (limiteNoticias >= targetData.length) ? 'none' : 'block';
-
+        document.getElementById('btn-cargar-mas').style.display = (limiteNoticias >= targetData.length) ? 'none' : 'block';
         lucide.createIcons();
     }
 
-    btnCargarMas.addEventListener('click', () => {
-        limiteNoticias += 25;
-        renderFeed();
-    });
-
-    filterContainer.addEventListener('click', (e) => {
-        if(e.target.classList.contains('filter-btn') && !e.target.classList.contains('toggle-tags-btn')) {
-            const tag = e.target.dataset.tag;
-            if (tag === 'Todos') selectedTags.clear();
-            else {
-                if (selectedTags.has(tag)) selectedTags.delete(tag);
-                else selectedTags.add(tag);
-            }
-            limiteNoticias = 25; 
-            
-            tagSearchInput.value = '';
-            
-            generateFilters(newsData); 
-            renderFeed();
-        }
-    });
+    document.getElementById('btn-cargar-mas').addEventListener('click', () => { limiteNoticias += 25; renderFeed(); });
 
     fetchNews();
 </script>
